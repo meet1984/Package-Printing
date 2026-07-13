@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-primary: #E5217C; /* accent */
+  --color-accent: #E5217C;
+  --color-heading: #2E1A47;
+  --color-text: #1A1A1A;
+  --color-text-muted: #6B6B6B;
+  --color-bg-alt: #F6F1E9;
+  --color-bg-dark: #1B0F2E;
+  --color-base: #FFFFFF;
+  --color-surface: #FFFFFF;
+  --color-border: #E8E6E1;
+  --color-neutral: #2D2D2D; /* charcoal body/heading text used across product, admin & auth pages */
+  --color-kraft: #E3D7C5; /* tan accent used for soft image/media backgrounds */
+  
+  /* Fonts */
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: 'Outfit', 'Inter', sans-serif;
+  --font-heading: 'Outfit', 'Inter', sans-serif;
+  
+  /* Radii */
+  --radius-card: 16px;
+  --radius-pill: 999px;
+}
+
+@layer base {
+  body {
+    @apply bg-base text-text font-body antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight text-heading;
+  }
+}
