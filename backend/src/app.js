@@ -22,7 +22,11 @@ const seoInjector = require('./middleware/seoInjector');
 app.use(seoInjector);
 
 // Static files (local uploads fallback)
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static('uploads', {
+  setHeaders: (res, path) => {
+    res.setHeader('Content-Disposition', 'attachment');
+  }
+}));
 
 // Routes
 app.get('/api/health', (req, res) => {
@@ -40,6 +44,8 @@ app.use('/api/blog-posts', require('./modules/content/blogPost.routes'));
 app.use('/api/about', require('./modules/about/about.routes'));
 app.use('/api/users', require('./modules/users/user.routes'));
 app.use('/api/site-faqs', require('./modules/content/siteFaq.routes'));
+app.use('/api/templates', require('./modules/templates/template.routes'));
+app.use('/api/mockups', require('./modules/mockups/mockup.routes'));
 app.use('/', require('./modules/seo/sitemap.routes'));
 
 // Error handling middleware

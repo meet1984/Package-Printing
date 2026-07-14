@@ -190,7 +190,7 @@ const CategoryScrollerSection = ({ title, categories }) => {
   if (!categories || categories.length === 0) return null;
 
   return (
-    <section ref={sectionRef} className="py-16 overflow-hidden select-none">
+    <section ref={sectionRef} className="py-16 overflow-hidden select-none bg-kraft paper-texture torn-edge-top">
       <div className="container mx-auto px-4 mb-8 flex items-end justify-between">
         <h2 className="text-3xl md:text-4xl font-black font-heading tracking-tighter text-heading">
           {title}
@@ -205,7 +205,7 @@ const CategoryScrollerSection = ({ title, categories }) => {
         <button 
           onClick={scrollLeftClick}
           disabled={!canScrollLeft}
-          className={`absolute left-4 md:left-8 top-[45%] -translate-y-1/2 z-10 hidden md:flex h-14 w-14 bg-white rounded-full border border-border items-center justify-center shadow-lg transition-all duration-300 ${
+          className={`absolute left-4 md:left-8 top-[45%] -translate-y-1/2 z-10 hidden md:flex h-14 w-14 bg-surface rounded-full border border-border items-center justify-center shadow-lg transition-all duration-300 ${
             canScrollLeft 
               ? 'hover:border-primary hover:text-primary opacity-0 group-hover/scroller:opacity-100 hover:scale-105' 
               : 'opacity-0 pointer-events-none'
@@ -218,7 +218,7 @@ const CategoryScrollerSection = ({ title, categories }) => {
         <button 
           onClick={scrollRightClick}
           disabled={!canScrollRight}
-          className={`absolute right-4 md:right-8 top-[45%] -translate-y-1/2 z-10 hidden md:flex h-14 w-14 bg-white rounded-full border border-border items-center justify-center shadow-lg transition-all duration-300 ${
+          className={`absolute right-4 md:right-8 top-[45%] -translate-y-1/2 z-10 hidden md:flex h-14 w-14 bg-surface rounded-full border border-border items-center justify-center shadow-lg transition-all duration-300 ${
             canScrollRight 
               ? 'hover:border-primary hover:text-primary opacity-0 group-hover/scroller:opacity-100 hover:scale-105' 
               : 'opacity-0 pointer-events-none'

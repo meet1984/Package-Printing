@@ -5,7 +5,7 @@ const CategoryCard = ({ category }) => {
   return (
     <Link 
       to={`/products/${category.slug}`}
-      className="group block relative aspect-[3/4] overflow-hidden rounded-2xl bg-surface border border-border"
+      className="group block relative aspect-[3/4] overflow-hidden rounded-[var(--radius-card)] bg-surface card-lifted border border-border"
     >
       <img 
         src={category.homepage_image || 'https://via.placeholder.com/600x800'} 

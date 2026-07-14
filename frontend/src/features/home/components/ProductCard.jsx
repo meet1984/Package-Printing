@@ -9,7 +9,7 @@ const ProductCard = ({ product }) => {
   return (
     <Link 
       to={`/product/${product.Category?.slug || 'all'}/${product.slug}`} 
-      className="w-full group block bg-base rounded-[var(--radius-card)] border border-transparent p-3 transition-all duration-300 hover:-translate-y-[5px] hover:border-border"
+      className="w-full group block bg-surface card-lifted rounded-[var(--radius-card)] border border-transparent p-3 transition-all duration-300 hover:-translate-y-[5px] hover:border-border"
     >
       <div className="block relative aspect-square md:aspect-[4/5] overflow-hidden rounded-[calc(var(--radius-card)-0.25rem)] mb-4">
         <img 
@@ -18,7 +18,7 @@ const ProductCard = ({ product }) => {
           className="w-full h-full object-cover transition-transform duration-[400ms] ease-out group-hover:scale-[1.15]"
         />
         {product.is_new && (
-          <div className="absolute top-4 right-4 bg-white text-text text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+          <div className="absolute top-4 right-4 badge-stamp badge-stamp-orange">
             New
           </div>
         )}

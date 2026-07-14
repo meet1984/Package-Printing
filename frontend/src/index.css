@@ -1,30 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&display=swap');
 
 @import "tailwindcss";
 
 @theme {
-  /* Colors */
-  --color-primary: #E5217C; /* accent */
-  --color-accent: #E5217C;
-  --color-heading: #2E1A47;
-  --color-text: #1A1A1A;
-  --color-text-muted: #6B6B6B;
-  --color-bg-alt: #F6F1E9;
+  /* Colors -- "Kraft & Craft": tactile, paper-based, printing/packaging brand */
+  --color-primary: #A6402A; /* muted terracotta "stamp red" -- small ink accent only, buttons/badges/links, never backgrounds */
+  --color-accent: #A6402A;
+  --color-accent-orange: #F1953D; /* sourced from the brand mark -- minimal secondary detail only, never a dominant color */
+
+  --color-ink: #2A2118; /* ink black -- warmer than pure black */
+  --color-heading: #2A2118;
+  --color-text: #2A2118;
+  --color-text-muted: #6B6259; /* warmed-up gray to sit with the kraft palette */
+
+  --color-kraft: #E3D7C5; /* dominant background tone for alternate sections */
+  --color-bg-alt: #E3D7C5; /* alias so existing bg-alt usage across the site now reads as kraft */
+  --color-cardboard: #8B6F47; /* deeper cardboard brown -- dark sections, footers, strong accents */
   --color-bg-dark: #1B0F2E;
-  --color-base: #FFFFFF;
-  --color-surface: #FFFFFF;
-  --color-border: #E8E6E1;
-  --color-neutral: #2D2D2D; /* charcoal body/heading text used across product, admin & auth pages */
-  --color-kraft: #E3D7C5; /* tan accent used for soft image/media backgrounds */
-  
+
+  --color-base: #FBF8F2; /* warm paper white page background, not stark white */
+  --color-surface: #FDFBF8; /* warm off-white card/surface tone, not pure white */
+  --color-border: #E2D6C4; /* warmed border to match kraft/cardboard */
+  --color-neutral: #2D2D2D;
+
   /* Fonts */
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
-  --font-display: 'Outfit', 'Inter', sans-serif;
-  --font-heading: 'Outfit', 'Inter', sans-serif;
-  
+  --font-display: 'Fraunces', 'Georgia', serif;
+  --font-heading: 'Fraunces', 'Georgia', serif;
+
   /* Radii */
-  --radius-card: 16px;
+  --radius-card: 9px; /* slightly squarer -- reads more printed/crafted than "rounded SaaS" */
+  --radius-stamp: 10px;
   --radius-pill: 999px;
 }
 
@@ -34,5 +41,96 @@
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading tracking-tight text-heading;
+  }
+}
+
+@layer utilities {
+  /* Subtle paper-grain overlay -- apply alongside a bg-* color class, e.g.
+     <section class="bg-kraft paper-texture"> */
+  .paper-texture {
+    position: relative;
+    background-image: url("./assets/paper-grain.svg");
+    background-repeat: repeat;
+    background-size: 140px 140px;
+  }
+
+  /* "Stamp"/badge pattern -- category tags, "New" labels, trust badges.
+     Rotated slightly with a dashed border, like an ink stamp. */
+  .badge-stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    background-color: var(--color-surface);
+    border: 1.5px dashed var(--color-cardboard);
+    border-radius: var(--radius-stamp);
+    transform: rotate(-3deg);
+    box-shadow: 0 1px 0 rgba(139, 111, 71, 0.15);
+  }
+
+  /* Deliberate, singular use of the orange brand accent -- reserve for one
+     highlight badge type ("New" / "Popular"), not a repeated pattern. */
+  .badge-stamp-orange {
+    color: var(--color-accent-orange);
+    border-color: var(--color-accent-orange);
+    background-color: color-mix(in srgb, var(--color-accent-orange) 10%, var(--color-surface));
+  }
+
+  /* Torn/perforated paper edge -- use as a section divider instead of a
+     plain straight boundary. Color the strip to match the section that
+     sits BELOW the divider (the section it "tears into"). */
+  .torn-edge-top,
+  .torn-edge-top-surface {
+    position: relative;
+  }
+  .torn-edge-top::before,
+  .torn-edge-top-surface::before {
+    content: '';
+    position: absolute;
+    top: -11px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background-color: var(--color-kraft);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='20' viewBox='0 0 24 20'%3E%3Cpath d='M0 20 L0 8 L4 13 L8 6 L12 14 L16 5 L20 12 L24 7 L24 20 Z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='20' viewBox='0 0 24 20'%3E%3Cpath d='M0 20 L0 8 L4 13 L8 6 L12 14 L16 5 L20 12 L24 7 L24 20 Z'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+    -webkit-mask-size: 24px 20px;
+    mask-size: 24px 20px;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .torn-edge-top-surface::before {
+    background-color: var(--color-surface);
+  }
+
+  /* Physical, lifted-card shadow -- a card resting on a surface, not a
+     generic soft SaaS shadow. */
+  .card-lifted {
+    box-shadow: 0 1px 2px rgba(42, 33, 24, 0.06), 0 10px 24px -8px rgba(42, 33, 24, 0.18);
+  }
+
+  /* Wax-seal / stamp button -- solid fill, slight shadow, satisfying
+     press-down active state. Use with a bg color (bg-primary etc.). */
+  .btn-stamp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-stamp);
+    box-shadow: 0 3px 0 rgba(42, 33, 24, 0.25), 0 6px 14px -4px rgba(42, 33, 24, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn-stamp:hover {
+    transform: translateY(-1px);
+  }
+  .btn-stamp:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(42, 33, 24, 0.25), 0 2px 6px -2px rgba(42, 33, 24, 0.35);
   }
 }

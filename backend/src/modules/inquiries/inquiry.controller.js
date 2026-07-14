@@ -4,6 +4,16 @@ const Product = require('../products/product.model');
 const sequelize = require('../../config/db');
 const { sendMail } = require('../../utils/emailService');
 
+const escapeHtml = (unsafe) => {
+  if (unsafe === null || unsafe === undefined) return '';
+  return String(unsafe)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+};
+
 const Joi = require('joi');
 
 exports.createInquiry = async (req, res, next) => {
@@ -73,37 +83,70 @@ exports.createInquiry = async (req, res, next) => {
 
     // Send email to Admin
     const adminEmail = process.env.ADMIN_EMAIL;
-    if (adminEmail) {
-      let itemsHtml = parsedItems.length > 0 ? parsedItems.map(item => `<li>Product ID: ${item.product_id} - Qty: ${item.quantity} - Variant: ${item.variant_details || item.variant || 'N/A'} - Notes: ${item.notes || 'N/A'}</li>`).join('') : '<p>No specific products requested.</p>';
-      
-      let attachHtml = attachment_url ? `<p><strong>Attachment:</strong> <a href="${process.env.VITE_API_URL ? process.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000'}${attachment_url}">View File</a></p>` : '';
+    const apiUrl = process.env.VITE_API_URL ? process.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000';
+    
+    let attachments = [];
+    let attachHtml = '';
+    let clientAttachHtml = '';
 
+    if (req.file) {
+      attachments.push({
+        filename: req.file.filename,
+        path: req.file.path,
+        cid: 'designImage'
+      });
+      
+      attachHtml = `
+        <p><strong>Design Attachment:</strong> <a href="${apiUrl}${attachment_url}">View Full File</a></p>
+        <img src="cid:designImage" style="max-width: 100%; max-height: 500px; border-radius: 8px; border: 1px solid #ddd;" alt="Attached Design" />
+      `;
+      
+      clientAttachHtml = `
+        <h4>Your Attached Design:</h4>
+        <img src="cid:designImage" style="max-width: 100%; max-height: 500px; border-radius: 8px; border: 1px solid #ddd;" alt="Attached Design" />
+      `;
+    }
+
+    if (adminEmail) {
+      const safeName = escapeHtml(name);
+      const safeEmail = escapeHtml(email);
+      const safePhone = escapeHtml(phone) || 'N/A';
+      const safeCompany = escapeHtml(company) || 'N/A';
+      const safeMessage = escapeHtml(message) || 'N/A';
+      const safeDepartment = escapeHtml(department);
+
+      let itemsHtml = parsedItems.length > 0 ? parsedItems.map(item => `<li>Product ID: ${escapeHtml(item.product_id)} - Qty: ${escapeHtml(item.quantity)} - Variant: ${escapeHtml(item.variant_details || item.variant) || 'N/A'} - Notes: ${escapeHtml(item.notes) || 'N/A'}</li>`).join('') : '<p>No specific products requested.</p>';
+      
       await sendMail({
         to: adminEmail,
-        subject: `New ${department.toUpperCase()} Request from ${name}`,
+        subject: `New ${safeDepartment.toUpperCase()} Request from ${safeName}`,
         html: `
-          <h3>New Request (${department})</h3>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Phone:</strong> ${phone || 'N/A'}</p>
-          <p><strong>Company:</strong> ${company || 'N/A'}</p>
-          <p><strong>Message:</strong> ${message || 'N/A'}</p>
+          <h3>New Request (${safeDepartment})</h3>
+          <p><strong>Name:</strong> ${safeName}</p>
+          <p><strong>Email:</strong> ${safeEmail}</p>
+          <p><strong>Phone:</strong> ${safePhone}</p>
+          <p><strong>Company:</strong> ${safeCompany}</p>
+          <p><strong>Message:</strong> ${safeMessage}</p>
           ${attachHtml}
           <h4>Requested Items:</h4>
           <ul>${itemsHtml}</ul>
-        `
+        `,
+        attachments
       });
     }
 
     // Send confirmation email to Client
+    const safeNameClient = escapeHtml(name);
     await sendMail({
       to: email,
       subject: `Quote Request Received - P&P Packaging`,
       html: `
-        <h3>Thank you for your quote request, ${name}!</h3>
+        <h3>Thank you for your quote request, ${safeNameClient}!</h3>
         <p>We have received your request and our team will get back to you within 24 hours.</p>
         <p>If you have any urgent questions, feel free to reply to this email or contact us directly.</p>
-      `
+        ${clientAttachHtml}
+      `,
+      attachments
     });
 
     res.status(201).json({ 
@@ -117,7 +160,7 @@ exports.createInquiry = async (req, res, next) => {
   }
 };
 
-// Admin Routes (To be protected in Phase 3)
+// Admin Routes (protected via protect + admin middleware in inquiry.routes.js)
 exports.getAllInquiries = async (req, res, next) => {
   try {
     const { department } = req.query;

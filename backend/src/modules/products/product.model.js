@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 const Category = require('../categories/category.model');
+const Template = require('../templates/template.model');
 
 const Product = sequelize.define('Product', {
   id: {
@@ -86,6 +87,14 @@ const Product = sequelize.define('Product', {
   image_alt: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  templateId: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: Template,
+      key: 'id'
+    }
   }
 }, {
   tableName: 'Products',
@@ -115,5 +124,7 @@ const Product = sequelize.define('Product', {
 // Associations
 Category.hasMany(Product, { foreignKey: 'category_id' });
 Product.belongsTo(Category, { foreignKey: 'category_id' });
+Product.belongsTo(Template, { foreignKey: 'templateId', as: 'Template', constraints: false });
+Template.hasMany(Product, { foreignKey: 'templateId', constraints: false });
 
 module.exports = Product;

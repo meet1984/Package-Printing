@@ -204,7 +204,7 @@ const ProductScrollerSection = ({ title, products, isQuoteCard = false }) => {
         <button 
           onClick={scrollLeftClick}
           disabled={!canScrollLeft}
-          className={`absolute left-4 md:left-8 top-[45%] -translate-y-1/2 z-10 hidden md:flex h-14 w-14 bg-white rounded-full border border-border items-center justify-center shadow-lg transition-all duration-300 ${
+          className={`absolute left-4 md:left-8 top-[45%] -translate-y-1/2 z-10 hidden md:flex h-14 w-14 bg-surface rounded-full border border-border items-center justify-center shadow-lg transition-all duration-300 ${
             canScrollLeft 
               ? 'hover:border-primary hover:text-primary opacity-0 group-hover/scroller:opacity-100 hover:scale-105' 
               : 'opacity-0 pointer-events-none'
@@ -217,7 +217,7 @@ const ProductScrollerSection = ({ title, products, isQuoteCard = false }) => {
         <button 
           onClick={scrollRightClick}
           disabled={!canScrollRight}
-          className={`absolute right-4 md:right-8 top-[45%] -translate-y-1/2 z-10 hidden md:flex h-14 w-14 bg-white rounded-full border border-border items-center justify-center shadow-lg transition-all duration-300 ${
+          className={`absolute right-4 md:right-8 top-[45%] -translate-y-1/2 z-10 hidden md:flex h-14 w-14 bg-surface rounded-full border border-border items-center justify-center shadow-lg transition-all duration-300 ${
             canScrollRight 
               ? 'hover:border-primary hover:text-primary opacity-0 group-hover/scroller:opacity-100 hover:scale-105' 
               : 'opacity-0 pointer-events-none'

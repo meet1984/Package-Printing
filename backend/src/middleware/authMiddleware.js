@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../config/env');
 
 exports.protect = (req, res, next) => {
   // Get token from cookie
@@ -16,7 +17,7 @@ exports.protect = (req, res, next) => {
 
   try {
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded; // Will contain { id, role }
     next();
   } catch (err) {

@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 const BlogSection = ({ posts }) => {
 
   return (
-    <section className="py-24 bg-[var(--color-bg-alt)]">
+    <section className="py-24 bg-kraft paper-texture torn-edge-top">
       <div className="container mx-auto px-4">
         
         <div className="text-center mb-16">
@@ -19,8 +19,8 @@ const BlogSection = ({ posts }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           {(posts || []).map(post => (
-            <div key={post.id} className="group">
-              <Link to={`/blog/${post.slug}`} className="block relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] mb-6">
+            <div key={post.id} className="group bg-surface card-lifted rounded-[var(--radius-card)] p-3">
+              <Link to={`/blog/${post.slug}`} className="block relative aspect-[4/3] overflow-hidden rounded-[calc(var(--radius-card)-0.25rem)] mb-4">
                 <img 
                   src={post.cover_image || 'https://via.placeholder.com/600x450'} 
                   alt={post.title} 
@@ -46,7 +46,7 @@ const BlogSection = ({ posts }) => {
         </div>
 
         <div className="text-center">
-          <Link to="/blog" className="inline-flex items-center justify-center px-8 py-4 bg-surface border border-border text-heading font-bold rounded-pill hover:border-primary hover:text-primary transition-colors shadow-sm">
+          <Link to="/blog" className="inline-flex items-center justify-center px-8 py-4 bg-surface border-2 border-dashed border-cardboard text-heading font-bold rounded-[var(--radius-stamp)] hover:border-primary hover:text-primary transition-colors shadow-sm">
             Explore P&P Insights →
           </Link>
         </div>

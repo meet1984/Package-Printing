@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const User = require('./user.model');
 const bcrypt = require('bcryptjs');
 const { sendMail } = require('../../utils/emailService');
+const { JWT_SECRET } = require('../../config/env');
 
 const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString(); // 6 digits
@@ -57,23 +58,39 @@ exports.verifyOTP = async (req, res, next) => {
 
     if (!user) return res.status(404).json({ message: 'User not found' });
     if (user.is_verified) return res.status(400).json({ message: 'User already verified' });
-    if (user.otp !== otp) return res.status(400).json({ message: 'Invalid OTP' });
+    if (user.otp !== otp) {
+      user.otp_attempts += 1;
+      if (user.otp_attempts >= 5) {
+        user.otp = null;
+        user.otp_expires_at = null;
+        await user.save();
+        return res.status(400).json({ message: 'Too many invalid attempts. Please request a new OTP.' });
+      }
+      await user.save();
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
     if (new Date() > user.otp_expires_at) return res.status(400).json({ message: 'OTP expired' });
 
     user.is_verified = true;
     user.otp = null;
     user.otp_expires_at = null;
+    user.otp_attempts = 0;
     user.last_login = new Date();
     await user.save();
 
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET || 'fallback_secret', { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: user.role === 'admin' ? '1d' : '7d' });
     
-    res.cookie('token', token, {
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-    });
+      sameSite: 'strict'
+    };
+    
+    if (user.role !== 'admin') {
+      cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+    }
+    
+    res.cookie('token', token, cookieOptions);
 
     res.json({ message: 'Email verified successfully', user: { id: user.id, name: user.name, email: user.email, role: user.role } });
   } catch (error) {
@@ -100,6 +117,7 @@ exports.login = async (req, res, next) => {
         const newOtp = generateOTP();
         user.otp = newOtp;
         user.otp_expires_at = new Date(Date.now() + 10 * 60 * 1000);
+        user.otp_attempts = 0;
         await user.save();
 
         await sendMail({
@@ -110,25 +128,41 @@ exports.login = async (req, res, next) => {
 
         return res.json({ message: 'OTP sent to email', requireOTP: true });
       } else {
-        if (user.otp !== otp) return res.status(400).json({ message: 'Invalid OTP' });
+        if (user.otp !== otp) {
+          user.otp_attempts += 1;
+          if (user.otp_attempts >= 5) {
+            user.otp = null;
+            user.otp_expires_at = null;
+            await user.save();
+            return res.status(400).json({ message: 'Too many invalid attempts. Please log in again to receive a new code.' });
+          }
+          await user.save();
+          return res.status(400).json({ message: 'Invalid OTP' });
+        }
         if (new Date() > user.otp_expires_at) return res.status(400).json({ message: 'OTP expired' });
         
         user.otp = null;
         user.otp_expires_at = null;
+        user.otp_attempts = 0;
       }
     }
 
     user.last_login = new Date();
     await user.save();
 
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET || 'fallback_secret', { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: user.role === 'admin' ? '1d' : '7d' });
     
-    res.cookie('token', token, {
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-    });
+      sameSite: 'strict'
+    };
+    
+    if (user.role !== 'admin') {
+      cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+    }
+    
+    res.cookie('token', token, cookieOptions);
 
     res.json({ message: 'Login successful', user: { id: user.id, name: user.name, email: user.email, role: user.role } });
   } catch (error) {
@@ -142,12 +176,33 @@ exports.logout = (req, res) => {
   res.json({ message: 'Logged out successfully' });
 };
 
-// Get current user (using token)
+// Get current user (using token manually instead of protect middleware)
 exports.getMe = async (req, res, next) => {
   try {
-    const user = await User.findByPk(req.user.id, { attributes: ['id', 'name', 'email', 'role', 'last_login'] });
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json(user);
+    let token;
+    if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
+    } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+
+    if (!token) {
+      return res.status(200).json({ user: null });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      return res.status(200).json({ user: null });
+    }
+
+    const user = await User.findByPk(decoded.id, { attributes: ['id', 'name', 'email', 'role', 'last_login'] });
+    if (!user) {
+      return res.status(200).json({ user: null });
+    }
+
+    res.status(200).json({ user });
   } catch (error) {
     next(error);
   }

@@ -20,7 +20,7 @@ const ValuePropsSection = ({ data }) => {
   };
 
   return (
-    <section className="py-24 bg-[var(--color-bg-alt)] border-t border-border/40">
+    <section className="py-24 bg-surface torn-edge-top-surface">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
           
@@ -33,7 +33,7 @@ const ValuePropsSection = ({ data }) => {
               We've redesigned the packaging experience to be faster, simpler, and more sustainable. Everything your growing brand needs to stand out.
             </p>
             <div>
-              <Link to="/products" className="inline-flex px-8 py-4 bg-primary text-white font-bold rounded-pill hover:bg-primary/90 transition-colors shadow-sm">
+              <Link to="/products" className="btn-stamp px-8 py-4 bg-primary text-white font-bold hover:bg-primary/90 transition-colors">
                 Get Started
               </Link>
             </div>

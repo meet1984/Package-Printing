@@ -1,18 +1,17 @@
 const sequelize = require('./config/db');
 
 require('./modules/categories/category.model');
+require('./modules/templates/template.model');
 require('./modules/products/product.model');
 require('./modules/products/productVariant.model');
 require('./modules/products/productImage.model');
 require('./modules/products/productFaq.model');
 require('./modules/inquiries/inquiry.model');
-require('./modules/inquiries/inquiryItem.model');
 require('./modules/content/blogPost.model');
 require('./modules/content/pageContent.model');
-require('./modules/content/testimonial.model');
-require('./modules/portfolio/portfolioItem.model');
-require('./modules/auth/admin.model');
 require('./modules/homepage/heroBanner.model');
+require('./modules/users/user.model');
+
 
 async function syncDb() {
   try {

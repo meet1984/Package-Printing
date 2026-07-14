@@ -40,6 +40,10 @@ const User = sequelize.define('User', {
     type: DataTypes.DATE,
     allowNull: true,
   },
+  otp_attempts: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
   last_login: {
     type: DataTypes.DATE,
     allowNull: true,

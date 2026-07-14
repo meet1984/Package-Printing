@@ -22,7 +22,7 @@ const { JSDOM } = require('jsdom');
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
-// Admin Routes (To be protected in Phase 3)
+// Admin Routes (protected via protect + admin middleware in pageContent.routes.js)
 exports.updatePageContent = async (req, res, next) => {
   try {
     let cleanContent = req.body.content;

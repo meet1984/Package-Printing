@@ -3,6 +3,7 @@ const sequelize = require('./config/db');
 
 // Import all models to ensure they are registered before sync
 require('./modules/categories/category.model');
+require('./modules/templates/template.model'); // must be before product.model (FK dependency)
 require('./modules/products/product.model');
 require('./modules/products/productVariant.model');
 require('./modules/products/productImage.model');

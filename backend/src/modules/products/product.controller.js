@@ -3,6 +3,7 @@ const ProductVariant = require('./productVariant.model');
 const ProductImage = require('./productImage.model');
 const ProductFaq = require('./productFaq.model');
 const Category = require('../categories/category.model');
+const Template = require('../templates/template.model');
 const { Op } = require('sequelize');
 
 // Public routes
@@ -28,7 +29,8 @@ exports.getAllProducts = async (req, res, next) => {
       where: whereClause,
       include: [
         { model: ProductImage, as: 'images', where: { is_primary: true }, required: false },
-        { model: Category }
+        { model: Category },
+        { model: Template, as: 'Template', required: false, attributes: ['id', 'name'] }
       ]
     });
     res.json(products);
@@ -45,7 +47,13 @@ exports.getProductBySlug = async (req, res, next) => {
         { model: ProductVariant, as: 'variants' },
         { model: ProductImage, as: 'images' },
         { model: ProductFaq, as: 'faqs' },
-        { model: Category }
+        { model: Category },
+        { 
+          model: Template, 
+          as: 'Template',
+          required: false,
+          attributes: ['id', 'name', 'productType', 'baseImageUrl', 'printArea', 'constraints', 'shadingMapUrl', 'faces']
+        }
       ],
       order: [
         [{ model: ProductImage, as: 'images' }, 'sort_order', 'ASC'],
@@ -62,9 +70,12 @@ exports.getProductBySlug = async (req, res, next) => {
   }
 };
 
-// Admin Routes (To be protected in Phase 3)
+// Admin Routes (protected via protect + admin middleware in product.routes.js)
 exports.createProduct = async (req, res, next) => {
   try {
+    if (req.body.templateId === '') {
+      req.body.templateId = null;
+    }
     const product = await Product.create(req.body);
     res.status(201).json(product);
   } catch (error) {
@@ -77,6 +88,9 @@ exports.updateProduct = async (req, res, next) => {
     const product = await Product.findByPk(req.params.id);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
+    }
+    if (req.body.templateId === '') {
+      req.body.templateId = null;
     }
     await product.update(req.body);
     res.json(product);

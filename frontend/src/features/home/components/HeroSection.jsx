@@ -7,7 +7,7 @@ const HeroSection = ({ banners }) => {
 
   if (!banners || banners.length === 0) {
     return (
-      <div className="w-full h-[400px] md:h-[550px] flex items-center justify-center bg-gray-100 text-text-muted">
+      <div className="w-full h-[400px] md:h-[550px] flex items-center justify-center bg-kraft paper-texture text-text-muted">
         Configure hero banners in Admin
       </div>
     );
@@ -33,7 +33,7 @@ const HeroSection = ({ banners }) => {
   const rightBanner = rightBanners[activeIndex] || rightBanners[rightBanners.length - 1];
 
   const renderPanel = (banner, fallbackColor) => {
-    if (!banner) return <div className={`w-full md:w-1/2 h-[500px] md:h-[700px] ${fallbackColor}`}></div>;
+    if (!banner) return <div className={`w-full md:w-1/2 h-[500px] md:h-[700px] ${fallbackColor} paper-texture`}></div>;
 
     let links = [];
     if (banner.subtitle_links) {
@@ -55,7 +55,14 @@ const HeroSection = ({ banners }) => {
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 animate-in fade-in zoom-in-95"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-        
+
+        <div
+          className="absolute top-6 left-6 md:top-8 md:left-8 bg-surface text-[11px] md:text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full border-2 border-dashed shadow-lg -rotate-6 select-none"
+          style={{ color: 'var(--color-accent-orange)', borderColor: 'var(--color-accent-orange)' }}
+        >
+          Custom Made
+        </div>
+
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white">
           <h2 key={`title-${banner.id}`} className="text-4xl md:text-5xl font-black font-heading tracking-tighter mb-4 text-white animate-in slide-in-from-bottom-4 fade-in duration-500">
             {banner.title}
@@ -91,8 +98,8 @@ const HeroSection = ({ banners }) => {
   return (
     <section className="relative w-full group/carousel">
       <div className="flex flex-col md:flex-row w-full">
-        {renderPanel(leftBanner, 'bg-gray-200')}
-        {renderPanel(rightBanner, 'bg-gray-300')}
+        {renderPanel(leftBanner, 'bg-kraft')}
+        {renderPanel(rightBanner, 'bg-[var(--color-cardboard)]/20')}
       </div>
 
       {maxSlides > 1 && (

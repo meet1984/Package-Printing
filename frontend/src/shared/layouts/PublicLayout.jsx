@@ -118,8 +118,10 @@ const PublicLayout = () => {
             </Link>
             
             <nav className="hidden lg:flex items-center space-x-6 font-bold text-sm">
-              <Link to="/products" className="hover:text-primary transition-colors">Products</Link>
-              <Link to="/about" className="hover:text-primary transition-colors">About</Link>
+              <Link to="/products" className="relative pb-1 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:w-0 after:bg-[var(--color-accent-orange)] after:transition-all after:duration-300 hover:after:w-full">Products</Link>
+              <Link to="/about" className="relative pb-1 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:w-0 after:bg-[var(--color-accent-orange)] after:transition-all after:duration-300 hover:after:w-full">About</Link>
+              <Link to="/mockup-generator" className="relative pb-1 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:w-0 after:bg-[var(--color-accent-orange)] after:transition-all after:duration-300 hover:after:w-full">Mockup</Link>
+              <Link to="/contact" className="relative pb-1 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:w-0 after:bg-[var(--color-accent-orange)] after:transition-all after:duration-300 hover:after:w-full">Contact</Link>
             </nav>
           </div>
 
@@ -148,7 +150,7 @@ const PublicLayout = () => {
 
             {/* Dropdown Results */}
             {showDropdown && searchQuery.trim().length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-border overflow-hidden z-50">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-surface rounded-xl shadow-xl border border-border overflow-hidden z-50">
                 {searchResults.length > 0 ? (
                   <div className="max-h-96 overflow-y-auto">
                     {searchResults.map(product => (
@@ -217,41 +219,42 @@ const PublicLayout = () => {
       </main>
 
       {/* 2.10 Footer */}
-      <footer className="bg-surface border-t border-border pt-16 pb-8">
+      <footer className="bg-[var(--color-cardboard)] border-t border-black/10 pt-16 pb-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
             
             <div className="lg:col-span-2">
-              <h3 className="text-3xl font-black font-heading tracking-tighter mb-4 text-heading">P&P</h3>
-              <p className="text-text-muted mb-6 max-w-sm">Premium custom printing and packaging solutions designed to help your brand stand out. Low minimums, fast turnaround.</p>
+              <h3 className="text-3xl font-black font-heading tracking-tighter mb-4 text-white">P&P</h3>
+              <p className="text-white/70 mb-6 max-w-sm">Premium custom printing and packaging solutions designed to help your brand stand out. Low minimums, fast turnaround.</p>
             </div>
             
             <div>
-              <h4 className="font-bold text-heading mb-4">Company</h4>
-              <ul className="space-y-3 text-sm text-text-muted">
-                <li><Link to="/about" className="hover:text-primary transition-colors">About Us</Link></li>
-                <li><Link to="/blog" className="hover:text-primary transition-colors">Blog</Link></li>
+              <h4 className="font-bold text-white mb-4">Company</h4>
+              <ul className="space-y-3 text-sm text-white/70">
+                <li><Link to="/about" className="hover:text-[var(--color-accent-orange)] transition-colors">About Us</Link></li>
+                <li><Link to="/blog" className="hover:text-[var(--color-accent-orange)] transition-colors">Blog</Link></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-bold text-heading mb-4">Support</h4>
-              <ul className="space-y-3 text-sm text-text-muted">
-                <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
+              <h4 className="font-bold text-white mb-4">Support</h4>
+              <ul className="space-y-3 text-sm text-white/70">
+                <li><Link to="/contact" className="hover:text-[var(--color-accent-orange)] transition-colors">Contact</Link></li>
+                <li><Link to="/mockup-generator" className="hover:text-[var(--color-accent-orange)] transition-colors">Mockup</Link></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-bold text-heading mb-4">Shop</h4>
-              <ul className="space-y-3 text-sm text-text-muted">
-                <li><Link to="/products" className="hover:text-primary transition-colors">All Products</Link></li>
+              <h4 className="font-bold text-white mb-4">Shop</h4>
+              <ul className="space-y-3 text-sm text-white/70">
+                <li><Link to="/products" className="hover:text-[var(--color-accent-orange)] transition-colors">All Products</Link></li>
               </ul>
             </div>
 
           </div>
 
-          <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-text-muted">© {new Date().getFullYear()} P&P Printing. All rights reserved.</p>
+          <div className="border-t border-white/15 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-white/60">© {new Date().getFullYear()} P&P Printing. All rights reserved.</p>
             <div className="flex gap-4">
               {contactSettings?.socialLinks?.map((link, idx) => {
                 if (!link.url) return null;
@@ -262,7 +265,7 @@ const PublicLayout = () => {
                     href={link.url} 
                     target="_blank" 
                     rel="noreferrer" 
-                    className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-text-muted hover:bg-primary hover:text-white transition-colors cursor-pointer"
+                    className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-white/80 hover:bg-primary hover:text-white transition-colors cursor-pointer"
                     title={link.platform}
                   >
                     <SocialIcon platform={link.platform} className="h-4 w-4" />

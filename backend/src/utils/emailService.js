@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendMail = async ({ to, subject, html }) => {
+const sendMail = async ({ to, subject, html, attachments }) => {
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER) {
     console.log(`[DEV EMAIL] To: ${to} | Subject: ${subject}`);
     console.log(`[DEV EMAIL BODY]:\n${html}\n`);
@@ -25,6 +25,7 @@ const sendMail = async ({ to, subject, html }) => {
     to,
     subject,
     html,
+    attachments
   });
 };
 
