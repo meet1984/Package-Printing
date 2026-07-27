@@ -15,16 +15,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.20.2'
+          node-version: '20'
 
       - name: Install backend dependencies
         working-directory: ./backend
-        run: npm install
+        run: npm ci || npm install
 
       - name: Install & build frontend
         working-directory: ./frontend
         run: |
-          npm install
+          npm ci || npm install
           npm run build
 
       - name: Install SSH key
@@ -39,9 +39,13 @@ jobs:
 
       - name: Package build for deploy
         run: |
-          tar --exclude='.git' --exclude='.github' \
-              --exclude='frontend/node_modules' --exclude='backend/node_modules' \
+          tar --exclude='.git' \
+              --exclude='.github' \
+              --exclude='frontend/node_modules' \
+              --exclude='backend/node_modules' \
               --exclude='node_modules' \
+              --exclude='backend/uploads' \
+              --exclude='backend/.env' \
               -czf /tmp/deploy.tar.gz .
 
       - name: Copy archive to server
@@ -55,6 +59,11 @@ jobs:
             cd ${{ secrets.APP_PATH }} &&
             tar -xzf deploy.tar.gz &&
             rm deploy.tar.gz &&
-            cd backend && npm install --production &&
-            cd .. && mkdir -p tmp && touch tmp/restart.txt
+            cd backend &&
+            ( [ -f /home/${{ secrets.SSH_USER }}/nodevenv/*/18/bin/activate ] && source /home/${{ secrets.SSH_USER }}/nodevenv/*/18/bin/activate || true ) &&
+            ( [ -f /home/${{ secrets.SSH_USER }}/nodevenv/*/20/bin/activate ] && source /home/${{ secrets.SSH_USER }}/nodevenv/*/20/bin/activate || true ) &&
+            npm install --omit=dev &&
+            cd .. &&
+            mkdir -p tmp &&
+            touch tmp/restart.txt
           "
