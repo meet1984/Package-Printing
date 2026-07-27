@@ -42,6 +42,7 @@ jobs:
           tar --exclude='.git' --exclude='.github' \
               --exclude='frontend/node_modules' --exclude='backend/node_modules' \
               --exclude='node_modules' \
+              --exclude='deploy.tar.gz' \
               -czf deploy.tar.gz .
 
       - name: Copy archive to server
