@@ -2,11 +2,12 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "db:seed-admin": "node src/scripts/seedAdmin.js"
+    "db:seed-admin": "node src/scripts/seedAdmin.js",
+    "db:cleanup-indexes": "node src/scripts/cleanup-duplicate-indexes.js"
   },
   "keywords": [],
   "author": "",

@@ -8,9 +8,8 @@ async function migrate() {
     await sequelize.authenticate();
     console.log('Database connected.');
 
-    // Wait for models to sync, in case the new column hasn't been created yet
-    // This alters the table to add the JSON column if it doesn't exist
-    await Template.sync({ alter: true });
+    // Wait for models to sync
+    await Template.sync();
 
     const templates = await Template.findAll();
     let count = 0;

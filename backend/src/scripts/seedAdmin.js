@@ -6,7 +6,7 @@ const User = require('../modules/users/user.model');
 async function seedAdmin() {
   try {
     await sequelize.authenticate();
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     
     const email = process.env.ADMIN_EMAIL;
     const password = process.env.ADMIN_PASSWORD;

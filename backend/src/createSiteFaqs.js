@@ -4,7 +4,7 @@ const SiteFaq = require('./modules/content/siteFaq.model');
 async function createSiteFaqsTable() {
   try {
     await sequelize.authenticate();
-    await SiteFaq.sync({ alter: true });
+    await SiteFaq.sync();
     console.log('Successfully created SiteFaqs table.');
   } catch (error) {
     console.error('Error creating SiteFaqs table:', error);

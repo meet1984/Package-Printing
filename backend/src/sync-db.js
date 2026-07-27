@@ -16,8 +16,9 @@ require('./modules/users/user.model');
 async function syncDb() {
   try {
     await sequelize.authenticate();
-    console.log('Syncing database...');
-    await sequelize.sync({ alter: true });
+    const alter = process.argv.includes('--alter');
+    console.log(`Syncing database... (alter: ${alter})`);
+    await sequelize.sync({ alter });
     console.log('Database synced successfully!');
     process.exit(0);
   } catch (err) {

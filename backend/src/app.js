@@ -49,6 +49,20 @@ app.use('/api/templates', require('./modules/templates/template.routes'));
 app.use('/api/mockups', require('./modules/mockups/mockup.routes'));
 app.use('/', require('./modules/seo/sitemap.routes'));
 
+// Serve built React frontend in production (for cPanel monolithic deployment)
+const path = require('path');
+const fs = require('fs');
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) {
+      return next();
+    }
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
+
 // Error handling middleware
 app.use(errorHandler);
 
