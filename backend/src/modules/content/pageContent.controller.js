@@ -8,8 +8,34 @@ exports.getPageContent = async (req, res, next) => {
     });
     
     if (!page) {
+      if (req.params.key === 'contact_settings') {
+        return res.json({
+          content: {
+            address: '123 Print Avenue, Industrial Estate\nNew Delhi, DL 110020\nIndia',
+            hours: 'Mon-Fri, 9am - 6pm',
+            email: 'support@pandp.com',
+            whatsapp: process.env.WHATSAPP_NUMBER || '',
+            supportName: 'Priya',
+            supportRole: 'Support Team Lead',
+            responseTime: 'We typically reply within 1 business hour.',
+            socialLinks: [
+              { platform: 'Instagram', url: 'https://instagram.com/pandp' },
+              { platform: 'LinkedIn', url: 'https://linkedin.com/company/pandp' }
+            ]
+          }
+        });
+      }
       return res.json({ content: null });
     }
+
+    if (req.params.key === 'contact_settings' && page && page.content) {
+      const content = {
+        ...page.content,
+        whatsapp: page.content.whatsapp || process.env.WHATSAPP_NUMBER || '',
+      };
+      return res.json({ ...page.toJSON(), content });
+    }
+
     res.json(page);
   } catch (error) {
     next(error);

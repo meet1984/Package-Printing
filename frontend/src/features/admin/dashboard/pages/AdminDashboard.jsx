@@ -62,7 +62,7 @@ const AdminDashboard = () => {
       
       <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
         <h2 className="text-xl font-bold font-display text-gray-900 mb-6">Quick Actions</h2>
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-4">
           <Link 
             to="/admin/products/new" 
             className="flex items-center justify-center gap-2 px-6 py-3.5 bg-brand text-white rounded-xl font-semibold hover:bg-brand-hover shadow-sm transition-all text-sm"
@@ -75,6 +75,13 @@ const AdminDashboard = () => {
             className="flex items-center justify-center gap-2 px-6 py-3.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-semibold hover:border-gray-300 hover:bg-gray-50 hover:shadow-xs transition-all text-sm"
           >
             View Inquiries
+            <ArrowRight size={18} />
+          </Link>
+          <Link 
+            to="/admin/contact-settings" 
+            className="flex items-center justify-center gap-2 px-6 py-3.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-semibold hover:border-gray-300 hover:bg-gray-50 hover:shadow-xs transition-all text-sm"
+          >
+            WhatsApp & Contact Settings
             <ArrowRight size={18} />
           </Link>
         </div>

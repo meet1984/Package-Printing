@@ -1,6 +1,7 @@
 const Inquiry = require('./inquiry.model');
 const InquiryItem = require('./inquiryItem.model');
 const Product = require('../products/product.model');
+const PageContent = require('../content/pageContent.model');
 const sequelize = require('../../config/db');
 const { sendMail } = require('../../utils/emailService');
 const { generateQuoteConfirmationEmail, generateAdminInquiryEmail } = require('../../utils/emailTemplates');
@@ -163,10 +164,20 @@ exports.createInquiry = async (req, res, next) => {
       attachments
     });
 
+    let whatsappNumber = process.env.WHATSAPP_NUMBER || '';
+    try {
+      const contactPage = await PageContent.findOne({ where: { page_key: 'contact_settings' } });
+      if (contactPage && contactPage.content && contactPage.content.whatsapp) {
+        whatsappNumber = contactPage.content.whatsapp;
+      }
+    } catch (e) {
+      console.error('Error fetching whatsapp number from contact_settings:', e);
+    }
+
     res.status(201).json({ 
       message: 'Quote requested successfully', 
       inquiryId: inquiry.id,
-      whatsappNumber: process.env.WHATSAPP_NUMBER || ''
+      whatsappNumber
     });
   } catch (error) {
     await t.rollback();

@@ -11,7 +11,7 @@ const AdminContactSettings = () => {
     address: '123 Print Avenue, Industrial Estate\nNew Delhi, DL 110020\nIndia',
     hours: 'Mon-Fri, 9am - 6pm',
     email: 'support@pandp.com',
-    whatsapp: '919876543210',
+    whatsapp: '',
     supportName: 'Priya',
     supportRole: 'Support Team Lead',
     responseTime: 'We typically reply within 1 business hour.',
@@ -163,10 +163,12 @@ const AdminContactSettings = () => {
                 <label className="block text-sm font-bold mb-1">WhatsApp Number (incl. country code)</label>
                 <input 
                   type="text"
-                  value={settings.whatsapp}
+                  value={settings.whatsapp || ''}
                   onChange={e => setSettings({...settings, whatsapp: e.target.value})}
                   className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-clay outline-none"
+                  placeholder="e.g. 919876543210"
                 />
+                <p className="text-xs text-gray-400 mt-1">Overrides the WHATSAPP_NUMBER set in the .env file.</p>
               </div>
             </div>
           </div>
