@@ -55,7 +55,6 @@ jobs:
             cd ${{ secrets.APP_PATH }} &&
             tar -xzf deploy.tar.gz &&
             rm deploy.tar.gz &&
-            source /home/${{ secrets.SSH_USER }}/nodevenv/nodeapp/18/bin/activate &&
             cd backend && npm install --production &&
             cd .. && mkdir -p tmp && touch tmp/restart.txt
           "
