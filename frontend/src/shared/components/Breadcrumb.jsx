@@ -1,19 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 
 const Breadcrumb = ({ category }) => {
   return (
-    <nav className="flex items-center space-x-2 text-sm text-text-muted mb-6">
-      <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-      <span>›</span>
+    <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-gray-500 mb-6">
+      <Link to="/" className="hover:text-brand transition-colors duration-[var(--duration-fast)]">Home</Link>
+      <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
       {category ? (
         <>
-          <Link to="/products" className="hover:text-primary transition-colors">Shop</Link>
-          <span>›</span>
-          <span className="text-text cursor-default font-medium">{category.name}</span>
+          <Link to="/products" className="hover:text-brand transition-colors duration-[var(--duration-fast)]">Products</Link>
+          <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+          <span className="text-gray-900 font-medium">{category.name}</span>
         </>
       ) : (
-        <span className="text-text cursor-default font-medium">Shop</span>
+        <span className="text-gray-900 font-medium">Products</span>
       )}
     </nav>
   );

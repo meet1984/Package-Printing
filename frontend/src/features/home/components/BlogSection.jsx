@@ -1,53 +1,65 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { ArrowRight } from 'lucide-react';
 
 const BlogSection = ({ posts }) => {
 
   return (
-    <section className="py-24 bg-kraft paper-texture torn-edge-top">
-      <div className="container mx-auto px-4">
-        
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-black font-heading tracking-tighter text-heading mb-4">
+    <section className="section-padding bg-gray-50">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        <div className="text-center mb-12">
+          <h2 className="text-display tracking-tight mb-3">
             Get inspired
           </h2>
-          <p className="text-text-muted text-lg">
-            Tips, trends, and inspiration from the P&P Insights Hub.
+          <p className="text-gray-500 text-lg max-w-xl mx-auto">
+            Tips, trends, and inspiration from the Zeprr Insights Hub.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {(posts || []).map(post => (
-            <div key={post.id} className="group bg-surface card-lifted rounded-[var(--radius-card)] p-3">
-              <Link to={`/blog/${post.slug}`} className="block relative aspect-[4/3] overflow-hidden rounded-[calc(var(--radius-card)-0.25rem)] mb-4">
-                <img 
-                  src={post.cover_image || 'https://via.placeholder.com/600x450'} 
-                  alt={post.title} 
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            <article key={post.id} className="group bg-white rounded-xl border border-gray-100 overflow-hidden shadow-xs hover:shadow-md transition-all duration-[var(--duration-normal)]">
+              <Link to={`/blog/${post.slug}`} className="block relative aspect-[4/3] overflow-hidden bg-gray-100">
+                <img
+                  src={post.cover_image || 'https://via.placeholder.com/600x450'}
+                  alt={post.title}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-[var(--duration-slow)] ease-[var(--ease-out)] group-hover:scale-105"
+                  loading="lazy"
                 />
               </Link>
-              
-              <div className="space-y-3">
-                <div className="text-xs font-bold text-primary uppercase tracking-wider">
+
+              <div className="p-5 space-y-2.5">
+                <div className="text-label text-brand">
                   {post.published_at ? format(new Date(post.published_at), 'MMM d, yyyy') : 'Recent'}
                 </div>
                 <Link to={`/blog/${post.slug}`}>
-                  <h3 className="text-xl font-bold font-heading text-heading group-hover:text-primary transition-colors line-clamp-2">
+                  <h3 className="text-lg font-display font-semibold text-gray-900 group-hover:text-brand transition-colors line-clamp-2 leading-snug">
                     {post.title}
                   </h3>
                 </Link>
-                <p className="text-text-muted text-sm line-clamp-2">
+                <p className="text-gray-500 text-sm line-clamp-2">
                   {post.meta_description || 'Read more about this topic on our blog.'}
                 </p>
               </div>
-            </div>
+            </article>
           ))}
         </div>
 
         <div className="text-center">
-          <Link to="/blog" className="inline-flex items-center justify-center px-8 py-4 bg-surface border-2 border-dashed border-cardboard text-heading font-bold rounded-[var(--radius-stamp)] hover:border-primary hover:text-primary transition-colors shadow-sm">
-            Explore P&P Insights →
+          <Link
+            to="/blog"
+            className="
+              inline-flex items-center gap-2 px-6 py-3
+              bg-white border border-gray-200 text-gray-800
+              font-semibold text-sm rounded-lg
+              hover:border-gray-300 hover:shadow-sm
+              transition-all duration-[var(--duration-fast)]
+            "
+          >
+            Explore Zeprr Insights
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 

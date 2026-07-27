@@ -4,6 +4,8 @@ import { useProducts } from '../useProducts';
 import SEO from '../../../shared/components/SEO';
 import { Helmet } from 'react-helmet-async';
 import MockupEditor from '../../generator/components/MockupEditor';
+import Button from '../../../shared/components/Button';
+import { ChevronDown, Sparkles } from 'lucide-react';
 
 const ProductDetail = () => {
   const { slug } = useParams();
@@ -30,19 +32,20 @@ const ProductDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" role="status" aria-label="Loading product" />
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-10 w-10 border-2 border-gray-200 border-t-brand" role="status" aria-label="Loading product" />
       </div>
     );
   }
-  if (error) return <div className="text-center py-20 text-red-500">Error: {error}</div>;
-  if (!product) return <div className="text-center py-20">Product not found</div>;
+  if (error) return <div className="text-center py-20 text-danger">{error}</div>;
+  if (!product) return <div className="text-center py-20 text-gray-500">Product not found</div>;
 
   if (showMockupModal && product.Template) {
     return (
       <div className="bg-gray-50 min-h-screen pt-4 pb-12">
         <MockupEditor
           template={product.Template}
+          productId={product.id}
           onClose={() => setShowMockupModal(false)}
         />
       </div>
@@ -56,9 +59,9 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="bg-base min-h-screen pt-24 pb-16">
+    <div className="bg-gray-50 min-h-screen pt-8 md:pt-12 pb-16">
       <SEO 
-        title={product.meta_title || `${product.name} | P&P`} 
+        title={product.meta_title || `${product.name} | Zeprr`} 
         description={product.meta_description || product.description} 
         image={product.images?.[0]?.url} 
       />
@@ -80,20 +83,20 @@ const ProductDetail = () => {
         </script>
       </Helmet>
 
-      <div className="container mx-auto px-4 max-w-7xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
           
           {/* Left Column: Photo Gallery */}
           <div className="space-y-4">
-            <div className="aspect-square bg-surface rounded-2xl border border-border p-8 flex items-center justify-center overflow-hidden relative">
+            <div className="aspect-square bg-white rounded-xl border border-gray-200 p-6 md:p-8 flex items-center justify-center overflow-hidden relative shadow-xs">
                {product.images?.length > 0 ? (
                  <img src={product.images[selectedImageIndex]?.url || product.images[0].url} alt={product.name} className="w-full h-full object-contain" />
                ) : (
-                 <div className="text-neutral/30 text-lg">No Image Available</div>
+                 <div className="text-gray-400 text-sm">No Image Available</div>
                )}
             </div>
             {product.images?.length > 1 && (
-              <div className="flex space-x-4 overflow-x-auto pb-2">
+              <div className="flex gap-3 overflow-x-auto pb-1">
                 {product.images.map((img, idx) => (
                   <button
                     key={img.id}
@@ -101,9 +104,13 @@ const ProductDetail = () => {
                     onClick={() => setSelectedImageIndex(idx)}
                     aria-label={`View image ${idx + 1} of ${product.images.length}`}
                     aria-current={selectedImageIndex === idx}
-                    className={`w-24 h-24 flex-shrink-0 bg-surface border rounded-lg p-2 overflow-hidden transition-colors ${
-                      selectedImageIndex === idx ? 'border-primary ring-2 ring-primary/20' : 'border-border hover:border-primary'
-                    }`}
+                    className={`
+                      w-20 h-20 flex-shrink-0 bg-white border rounded-lg p-2 overflow-hidden
+                      transition-all duration-[var(--duration-fast)]
+                      ${selectedImageIndex === idx
+                        ? 'border-brand ring-2 ring-brand/20'
+                        : 'border-gray-200 hover:border-gray-300'}
+                    `}
                   >
                     <img src={img.url} alt="" className="w-full h-full object-contain" />
                   </button>
@@ -115,26 +122,31 @@ const ProductDetail = () => {
           {/* Right Column: Details */}
           <div className="flex flex-col">
             
-            {/* 1. Benefit-led opening line */}
-            <h1 className="text-4xl lg:text-5xl font-display font-bold text-neutral leading-tight mb-2">
+            <h1 className="text-3xl lg:text-4xl font-display font-semibold text-gray-900 leading-tight mb-2 tracking-tight">
               {product.name}
             </h1>
-            <p className="text-xl text-neutral/80 font-medium mb-8">
+            <p className="text-lg text-gray-500 mb-8 leading-relaxed">
               {product.meta_title || "Make every interaction a walking ad for your brand."}
             </p>
 
-            {/* 3. Variant selector with live price */}
+            {/* Variant selector */}
             {product.variants?.length > 0 && (
-              <div className="mb-6">
-                <h3 className="font-semibold text-neutral mb-3">Select Option</h3>
-                <div className="flex flex-wrap gap-3">
+              <div className="mb-8">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Select Option</h3>
+                <div className="flex flex-wrap gap-2">
                   {product.variants.map(v => (
                     <button 
                       key={v.id}
                       type="button"
                       onClick={() => setSelectedVariant(v)}
                       aria-pressed={selectedVariant?.id === v.id}
-                      className={`px-5 py-2.5 rounded-full border transition-all ${selectedVariant?.id === v.id ? 'border-primary bg-primary/5 text-primary font-medium' : 'border-border bg-surface hover:border-neutral/30 text-neutral/80'}`}
+                      className={`
+                        px-4 py-2.5 rounded-lg border text-sm font-medium
+                        transition-all duration-[var(--duration-fast)]
+                        ${selectedVariant?.id === v.id
+                          ? 'border-brand bg-brand-subtle text-brand'
+                          : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700'}
+                      `}
                     >
                       {v.value}
                     </button>
@@ -144,50 +156,72 @@ const ProductDetail = () => {
             )}
 
 
-            {/* 5. Specs woven into short prose */}
-            <div className="prose prose-neutral mb-10">
+            {/* Description */}
+            <div className="mb-10 text-gray-600 leading-relaxed">
               <p className="whitespace-pre-wrap">{product.description}</p>
             </div>
 
 
-
-
-
-            {/* 7. Request a Quote button */}
-            <button 
-              onClick={handleRequestQuote}
-              className="w-full bg-primary text-white py-4 rounded-full font-bold text-lg hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/30 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg"
-            >
-              <span>Request a Quote</span>
-            </button>
-
-            {/* Mockup Preview Button — only shown if a template is linked */}
-            {product.Template && (
-              <button
-                onClick={() => setShowMockupModal(true)}
-                className="w-full mt-3 border-2 border-primary text-primary py-4 rounded-full font-bold text-lg hover:bg-primary hover:text-white transition-all flex items-center justify-center space-x-2"
+            {/* Request a Quote button */}
+            <div className="space-y-3 lg:max-w-md">
+              <Button 
+                variant="primary"
+                size="xl"
+                onClick={handleRequestQuote}
+                className="w-full"
               >
-                <span>✨ Preview with Your Logo</span>
-              </button>
-            )}
+                Request a Quote
+              </Button>
+
+              {/* Mockup Preview Button */}
+              {product.Template && (
+                <Button
+                  variant="outline"
+                  size="xl"
+                  onClick={() => setShowMockupModal(true)}
+                  className="w-full"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Preview with Your Logo
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* 8. Product-specific FAQ block */}
+        {/* Product-specific FAQ block */}
         {product.faqs?.length > 0 && (
-          <div className="mt-24 max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold font-display text-center mb-10">Frequently Asked Questions</h2>
-            <div className="space-y-4">
+          <div className="mt-20 max-w-3xl mx-auto">
+            <h2 className="text-2xl font-display font-semibold text-center mb-8 tracking-tight">Frequently Asked Questions</h2>
+            <div className="space-y-3">
               {product.faqs.map(faq => (
-                <div key={faq.id} className="bg-surface border border-border rounded-xl p-6">
-                  <h4 className="font-bold text-lg mb-2">{faq.question}</h4>
-                  <p className="text-neutral/70">{faq.answer}</p>
-                </div>
+                <FaqItem key={faq.id} faq={faq} />
               ))}
             </div>
           </div>
         )}
 
+      </div>
+    </div>
+  );
+};
+
+const FaqItem = ({ faq }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between p-5 text-left font-semibold text-sm text-gray-900 hover:bg-gray-50 transition-colors"
+      >
+        {faq.question}
+        <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-[var(--duration-normal)] ${isOpen ? 'rotate-180 text-brand' : ''}`} />
+      </button>
+      <div className={`transition-all duration-[var(--duration-normal)] ease-[var(--ease-out)] overflow-hidden ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className="px-5 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
+          {faq.answer}
+        </div>
       </div>
     </div>
   );

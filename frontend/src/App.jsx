@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import HomePage from './features/home/HomePage';
 import ProductList from './features/products/components/ProductList';
@@ -18,7 +18,6 @@ import AdminCategories from './features/admin/categories/AdminCategories';
 import AdminProducts from './features/admin/products/AdminProducts';
 import AdminProductNew from './features/admin/products/AdminProductNew';
 import AdminProductEdit from './features/admin/products/AdminProductEdit';
-import AdminAboutEditor from './features/admin/about-editor/AdminAboutEditor';
 import AdminInquiries from './features/admin/inquiries/AdminInquiries';
 import AdminHomepage from './features/admin/homepage/AdminHomepage';
 import AdminBlog from './features/admin/blog/AdminBlog';
@@ -35,7 +34,7 @@ function App() {
     <>
       <ScrollToTop />
       <Helmet>
-        <title>P&P | Custom Printing & Packaging</title>
+        <title>Zeprr | Custom Printing & Packaging</title>
       </Helmet>
       
       <Routes>
@@ -66,11 +65,11 @@ function App() {
           <Route path="/admin/homepage" element={<AdminHomepage />} />
           <Route path="/admin/blog" element={<AdminBlog />} />
           <Route path="/admin/about" element={<AdminAboutPage />} />
-          <Route path="/admin/about-editor" element={<AdminAboutEditor />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/templates" element={<AdminTemplates />} />
           <Route path="/admin/templates/new" element={<AdminTemplateEdit />} />
           <Route path="/admin/templates/edit/:id" element={<AdminTemplateEdit />} />
+          <Route path="/admin/*" element={<Navigate to="/admin/dashboard" replace />} />
         </Route>
       </Routes>
     </>

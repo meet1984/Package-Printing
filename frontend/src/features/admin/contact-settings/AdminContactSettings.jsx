@@ -82,21 +82,21 @@ const AdminContactSettings = () => {
   return (
     <div className="max-w-3xl">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-black font-display text-neutral">Contact Page Settings</h1>
+        <h1 className="text-3xl font-semibold font-display text-gray-900">Contact Page Settings</h1>
       </div>
 
-      <div className="bg-surface border border-border p-8 rounded-3xl shadow-sm">
+      <div className="bg-white border border-gray-200 p-8 rounded-3xl shadow-sm">
         <form onSubmit={handleSave} className="space-y-6">
           
           <div>
-            <h3 className="font-bold text-lg border-b border-border pb-2 mb-4">Location & Hours</h3>
+            <h3 className="font-bold text-lg border-b border-gray-200 pb-2 mb-4">Location & Hours</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-bold mb-1">Office Address</label>
                 <textarea 
                   value={settings.address}
                   onChange={e => setSettings({...settings, address: e.target.value})}
-                  className="w-full px-4 py-2 border border-border rounded-xl focus:border-primary outline-none"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-clay outline-none"
                   rows="3"
                 />
               </div>
@@ -106,14 +106,14 @@ const AdminContactSettings = () => {
                   type="text"
                   value={settings.hours}
                   onChange={e => setSettings({...settings, hours: e.target.value})}
-                  className="w-full px-4 py-2 border border-border rounded-xl focus:border-primary outline-none"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-clay outline-none"
                 />
               </div>
             </div>
           </div>
 
           <div>
-            <h3 className="font-bold text-lg border-b border-border pb-2 mb-4">Personalization</h3>
+            <h3 className="font-bold text-lg border-b border-gray-200 pb-2 mb-4">Personalization</h3>
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -122,7 +122,7 @@ const AdminContactSettings = () => {
                     type="text"
                     value={settings.supportName}
                     onChange={e => setSettings({...settings, supportName: e.target.value})}
-                    className="w-full px-4 py-2 border border-border rounded-xl focus:border-primary outline-none"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-clay outline-none"
                   />
                 </div>
                 <div>
@@ -131,7 +131,7 @@ const AdminContactSettings = () => {
                     type="text"
                     value={settings.supportRole}
                     onChange={e => setSettings({...settings, supportRole: e.target.value})}
-                    className="w-full px-4 py-2 border border-border rounded-xl focus:border-primary outline-none"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-clay outline-none"
                   />
                 </div>
               </div>
@@ -141,14 +141,14 @@ const AdminContactSettings = () => {
                   type="text"
                   value={settings.responseTime}
                   onChange={e => setSettings({...settings, responseTime: e.target.value})}
-                  className="w-full px-4 py-2 border border-border rounded-xl focus:border-primary outline-none"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-clay outline-none"
                 />
               </div>
             </div>
           </div>
 
           <div>
-            <h3 className="font-bold text-lg border-b border-border pb-2 mb-4">Direct Channels</h3>
+            <h3 className="font-bold text-lg border-b border-gray-200 pb-2 mb-4">Direct Channels</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-bold mb-1">Support Email</label>
@@ -156,7 +156,7 @@ const AdminContactSettings = () => {
                   type="email"
                   value={settings.email}
                   onChange={e => setSettings({...settings, email: e.target.value})}
-                  className="w-full px-4 py-2 border border-border rounded-xl focus:border-primary outline-none"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-clay outline-none"
                 />
               </div>
               <div>
@@ -165,19 +165,19 @@ const AdminContactSettings = () => {
                   type="text"
                   value={settings.whatsapp}
                   onChange={e => setSettings({...settings, whatsapp: e.target.value})}
-                  className="w-full px-4 py-2 border border-border rounded-xl focus:border-primary outline-none"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:border-clay outline-none"
                 />
               </div>
             </div>
           </div>
 
           <div>
-            <div className="flex items-center justify-between border-b border-border pb-2 mb-4">
+            <div className="flex items-center justify-between border-b border-gray-200 pb-2 mb-4">
               <h3 className="font-bold text-lg">Social Media Links</h3>
               <button 
                 type="button" 
                 onClick={addSocialLink}
-                className="flex items-center gap-1 text-sm font-bold text-primary hover:text-primary/80"
+                className="flex items-center gap-1 text-sm font-bold text-brand hover:text-brand/80"
               >
                 <Plus className="h-4 w-4" /> Add Link
               </button>
@@ -185,17 +185,17 @@ const AdminContactSettings = () => {
             
             <div className="space-y-4">
               {(!settings.socialLinks || settings.socialLinks.length === 0) && (
-                <div className="text-sm text-text-muted italic">No social links added.</div>
+                <div className="text-sm text-ink-soft italic">No social links added.</div>
               )}
               {settings.socialLinks?.map((link, idx) => (
-                <div key={idx} className="flex items-start gap-4 p-4 border border-border rounded-xl bg-gray-50/50">
+                <div key={idx} className="flex items-start gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50/50">
                   <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-bold mb-1 text-text-muted">Platform</label>
+                      <label className="block text-xs font-bold mb-1 text-ink-soft">Platform</label>
                       <select 
                         value={link.platform}
                         onChange={(e) => updateSocialLink(idx, 'platform', e.target.value)}
-                        className="w-full px-3 py-2 border border-border rounded-lg text-sm outline-none focus:border-primary"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-clay"
                       >
                         <option value="Instagram">Instagram</option>
                         <option value="Facebook">Facebook</option>
@@ -207,12 +207,12 @@ const AdminContactSettings = () => {
                       </select>
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-xs font-bold mb-1 text-text-muted">URL</label>
+                      <label className="block text-xs font-bold mb-1 text-ink-soft">URL</label>
                       <input 
                         type="url"
                         value={link.url}
                         onChange={(e) => updateSocialLink(idx, 'url', e.target.value)}
-                        className="w-full px-3 py-2 border border-border rounded-lg text-sm outline-none focus:border-primary"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-clay"
                         placeholder="https://..."
                       />
                     </div>
@@ -234,7 +234,7 @@ const AdminContactSettings = () => {
             <button 
               type="submit" 
               disabled={saving}
-              className="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:bg-primary/90 disabled:opacity-50"
+              className="bg-brand text-white px-8 py-3 rounded-xl font-bold hover:bg-brand/90 disabled:opacity-50"
             >
               {saving ? 'Saving...' : 'Save Settings'}
             </button>

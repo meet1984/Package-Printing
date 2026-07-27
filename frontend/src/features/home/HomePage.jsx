@@ -31,7 +31,7 @@ const HomePage = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-clay"></div>
       </div>
     );
   }
@@ -40,29 +40,38 @@ const HomePage = () => {
 
   return (
     <>
-      <SEO 
-        title="P&P | Custom Printing & Packaging" 
+      <SEO
+        title="Zeprr | Custom Printing & Packaging"
         description="Premium custom printing and packaging solutions designed to help your brand stand out."
       />
-      
+
       {/* 2.3 Split Hero */}
       <HeroSection banners={data.heroBanners} />
 
       {/* 2.4 Low Minimum Must-haves */}
-      <ProductScrollerSection 
-        title="Low minimum must-haves" 
-        products={data.homeScrollProducts} 
+      <ProductScrollerSection
+        title="Low minimum must-haves"
+        products={data.homeScrollProducts}
       />
 
-      <CategoryScrollerSection 
+      <CategoryScrollerSection
         title="Shop by category"
         categories={data.trendingCategories}
       />
 
+      {/* Custom Dynamic Scrollers */}
+      {data.customScrollers && data.customScrollers.map((scroller) => (
+        <ProductScrollerSection
+          key={scroller.id}
+          title={scroller.title}
+          products={scroller.products}
+        />
+      ))}
+
       {/* 2.6 Trusted by growing brands */}
-      <ProductScrollerSection 
-        title="Trusted by growing brands" 
-        products={data.featuredProducts} 
+      <ProductScrollerSection
+        title="Trusted by growing brands"
+        products={data.featuredProducts}
         isQuoteCard={true}
       />
 

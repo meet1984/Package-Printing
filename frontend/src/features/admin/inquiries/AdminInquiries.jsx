@@ -51,24 +51,23 @@ const AdminInquiries = () => {
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <h1 className="text-3xl font-black font-display text-neutral">Inquiries & Quotes</h1>
+        <h1 className="text-3xl font-semibold font-display text-gray-900">Inquiries & Quotes</h1>
         <select 
           value={filterDepartment}
           onChange={(e) => setFilterDepartment(e.target.value)}
-          className="px-4 py-2 bg-surface border border-border rounded-xl focus:border-primary focus:outline-none"
+          className="px-4 py-2 bg-white border border-gray-200 rounded-xl focus:border-clay focus:outline-none"
         >
           <option value="all">All Departments</option>
           <option value="general">General</option>
           <option value="bulk">Bulk & Wholesale</option>
           <option value="support">Support</option>
           <option value="partnership">Partnership / Press</option>
-          <option value="careers">Careers</option>
         </select>
       </div>
 
-      <div className="bg-surface border border-border rounded-2xl overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
         <table className="w-full text-left">
-          <thead className="bg-kraft/10 border-b border-border">
+          <thead className="bg-kraft/10 border-b border-gray-200">
             <tr>
               <th className="px-6 py-4 font-bold">Client</th>
               <th className="px-6 py-4 font-bold">Dept</th>
@@ -84,10 +83,10 @@ const AdminInquiries = () => {
                 <tr className="hover:bg-kraft/5 cursor-pointer" onClick={() => toggleExpand(inq.id)}>
                   <td className="px-6 py-4">
                     <div className="font-bold">{inq.name}</div>
-                    <div className="text-sm text-neutral/60">{inq.company || 'Individual'}</div>
+                    <div className="text-sm text-gray-500">{inq.company || 'Individual'}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-1 rounded">
+                    <span className="text-xs font-bold uppercase tracking-wider bg-brand/10 text-brand px-2 py-1 rounded">
                       {inq.department || 'general'}
                     </span>
                   </td>
@@ -114,20 +113,20 @@ const AdminInquiries = () => {
                       <option value="closed">Closed</option>
                     </select>
                   </td>
-                  <td className="px-6 py-4 text-right text-sm text-primary font-bold">
+                  <td className="px-6 py-4 text-right text-sm text-brand font-bold">
                     {expandedId === inq.id ? 'Close' : 'View Details'}
                   </td>
                 </tr>
                 {expandedId === inq.id && (
-                  <tr className="bg-kraft/5 border-b-2 border-border">
+                  <tr className="bg-kraft/5 border-b-2 border-gray-200">
                     <td colSpan="5" className="px-8 py-6">
                       <div className="grid grid-cols-2 gap-8">
                         <div>
-                          <h4 className="font-bold mb-3 text-sm uppercase text-neutral/60">Contact Info</h4>
-                          <p><strong>Email:</strong> <a href={`mailto:${inq.email}`} className="text-primary hover:underline">{inq.email}</a></p>
+                          <h4 className="font-bold mb-3 text-sm uppercase text-gray-500">Contact Info</h4>
+                          <p><strong>Email:</strong> <a href={`mailto:${inq.email}`} className="text-brand hover:underline">{inq.email}</a></p>
                           <p><strong>Phone:</strong> {inq.phone || 'N/A'}</p>
                           <p className="mt-4"><strong>Message:</strong></p>
-                          <p className="text-neutral/80 italic mt-1">{inq.message || 'No additional message.'}</p>
+                          <p className="text-gray-500 italic mt-1">{inq.message || 'No additional message.'}</p>
                           {inq.attachment_url && (
                             <div className="mt-4">
                               <a 
@@ -142,18 +141,18 @@ const AdminInquiries = () => {
                           )}
                         </div>
                         <div>
-                          <h4 className="font-bold mb-3 text-sm uppercase text-neutral/60">Requested Items</h4>
+                          <h4 className="font-bold mb-3 text-sm uppercase text-gray-500">Requested Items</h4>
                           <div className="space-y-3">
                             {inq.items?.map(item => (
-                              <div key={item.id} className="bg-surface p-3 rounded-lg border border-border text-sm">
+                              <div key={item.id} className="bg-white p-3 rounded-lg border border-gray-200 text-sm">
                                 <div className="flex justify-between font-bold">
                                   <span>{item.quantity}x {item.Product?.name}</span>
                                 </div>
                                 {item.variant_details?.value && (
-                                  <div className="text-neutral/60 mt-1">Variant: {item.variant_details.value}</div>
+                                  <div className="text-gray-500 mt-1">Variant: {item.variant_details.value}</div>
                                 )}
                                 {item.notes && (
-                                  <div className="text-neutral/60 mt-1">Notes: {item.notes}</div>
+                                  <div className="text-gray-500 mt-1">Notes: {item.notes}</div>
                                 )}
                               </div>
                             ))}
@@ -166,7 +165,7 @@ const AdminInquiries = () => {
               </React.Fragment>
             ))}
             {inquiries.length === 0 && (
-              <tr><td colSpan="5" className="text-center py-8 text-neutral/50">No inquiries yet.</td></tr>
+              <tr><td colSpan="5" className="text-center py-8 text-gray-500">No inquiries yet.</td></tr>
             )}
           </tbody>
         </table>

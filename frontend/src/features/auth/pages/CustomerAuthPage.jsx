@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../shared/store/useAuth';
+import Input from '../../../shared/components/Input';
+import Button from '../../../shared/components/Button';
+import { Loader2 } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -9,7 +12,7 @@ const CustomerAuthPage = () => {
   const { loadUser } = useAuth();
   const navigate = useNavigate();
 
-  const [mode, setMode] = useState('login'); // 'login', 'register', 'verify'
+  const [mode, setMode] = useState('login'); // 'login', 'register', 'verify', 'verify-admin'
   const [formData, setFormData] = useState({ name: '', email: '', password: '', otp: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -96,65 +99,72 @@ const CustomerAuthPage = () => {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-base px-4 py-12">
-      <div className="w-full max-w-md bg-white p-8 rounded-3xl shadow-xl border border-border/50">
-        <h2 className="text-3xl font-black font-heading text-heading mb-2 text-center">
-          {mode === 'login' ? 'Welcome back' : mode === 'register' ? 'Create account' : 'Verify email'}
-        </h2>
-        <p className="text-center text-text-muted mb-8 text-sm">
-          {mode === 'login' ? 'Enter your details to sign in.' : mode === 'register' ? 'Sign up to manage your orders.' : `We sent a code to ${formData.email}`}
-        </p>
+    <div className="min-h-[85vh] flex items-center justify-center bg-gray-50 px-4 py-12">
+      <div className="w-full max-w-[420px] bg-white p-8 md:p-10 rounded-2xl shadow-xl shadow-black/5 border border-gray-100">
+        
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-display font-semibold text-gray-900 mb-2 tracking-tight">
+            {mode === 'login' ? 'Welcome back' : mode === 'register' ? 'Create account' : 'Verify email'}
+          </h2>
+          <p className="text-gray-500 text-sm">
+            {mode === 'login' ? 'Enter your details to sign in.' 
+              : mode === 'register' ? 'Sign up to manage your orders.' 
+              : `We sent a code to ${formData.email}`}
+          </p>
+        </div>
 
-        {error && <div role="alert" aria-live="assertive" className="p-3 mb-4 bg-red-50 text-red-600 rounded-xl text-sm border border-red-100">{error}</div>}
-        {message && <div role="status" aria-live="polite" className="p-3 mb-4 bg-green-50 text-green-700 rounded-xl text-sm border border-green-100">{message}</div>}
+        {/* Alerts */}
+        {error && (
+          <div role="alert" aria-live="assertive" className="p-3.5 mb-6 bg-danger-bg text-red-700 rounded-lg text-sm border border-red-200 font-medium">
+            {error}
+          </div>
+        )}
+        {message && (
+          <div role="status" aria-live="polite" className="p-3.5 mb-6 bg-success-bg text-green-700 rounded-lg text-sm border border-green-200 font-medium">
+            {message}
+          </div>
+        )}
 
+        {/* Form */}
         <form onSubmit={mode === 'login' ? handleLogin : mode === 'register' ? handleRegister : mode === 'verify-admin' ? handleVerifyAdmin : handleVerify} className="space-y-4">
           {(mode === 'login' || mode === 'register') && (
             <>
               {mode === 'register' && (
-                <div>
-                  <label htmlFor="auth-name" className="block text-sm font-bold text-neutral/70 mb-1">Full Name</label>
-                  <input 
-                    id="auth-name"
-                    type="text" 
-                    autoComplete="name"
-                    value={formData.name} 
-                    onChange={e => setFormData({...formData, name: e.target.value})} 
-                    className="w-full px-4 py-3 rounded-xl border border-border bg-base focus:border-primary focus:outline-none" 
-                    required 
-                  />
-                </div>
+                <Input
+                  label="Full Name"
+                  id="auth-name"
+                  type="text"
+                  autoComplete="name"
+                  value={formData.name}
+                  onChange={e => setFormData({...formData, name: e.target.value})}
+                  required
+                />
               )}
-              <div>
-                <label htmlFor="auth-email" className="block text-sm font-bold text-neutral/70 mb-1">Email</label>
-                <input 
-                  id="auth-email"
-                  type="email" 
-                  autoComplete="email"
-                  value={formData.email} 
-                  onChange={e => setFormData({...formData, email: e.target.value})} 
-                  className="w-full px-4 py-3 rounded-xl border border-border bg-base focus:border-primary focus:outline-none" 
-                  required 
-                />
-              </div>
-              <div>
-                <label htmlFor="auth-password" className="block text-sm font-bold text-neutral/70 mb-1">Password</label>
-                <input 
-                  id="auth-password"
-                  type="password" 
-                  autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
-                  value={formData.password} 
-                  onChange={e => setFormData({...formData, password: e.target.value})} 
-                  className="w-full px-4 py-3 rounded-xl border border-border bg-base focus:border-primary focus:outline-none" 
-                  required 
-                />
-              </div>
+              <Input
+                label="Email"
+                id="auth-email"
+                type="email"
+                autoComplete="email"
+                value={formData.email}
+                onChange={e => setFormData({...formData, email: e.target.value})}
+                required
+              />
+              <Input
+                label="Password"
+                id="auth-password"
+                type="password"
+                autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
+                value={formData.password}
+                onChange={e => setFormData({...formData, password: e.target.value})}
+                required
+              />
             </>
           )}
 
           {(mode === 'verify' || mode === 'verify-admin') && (
-            <div>
-              <label htmlFor="auth-otp" className="block text-sm font-bold text-neutral/70 mb-1">6-Digit Code</label>
+            <div className="mb-6">
+              <label htmlFor="auth-otp" className="block text-sm font-medium text-gray-700 mb-2">6-Digit Code</label>
               <input 
                 id="auth-otp"
                 type="text" 
@@ -163,29 +173,36 @@ const CustomerAuthPage = () => {
                 maxLength={6}
                 value={formData.otp} 
                 onChange={e => setFormData({...formData, otp: e.target.value})} 
-                className="w-full px-4 py-3 rounded-xl border border-border bg-base focus:border-primary focus:outline-none text-center tracking-[1em] text-xl font-mono" 
+                className="w-full px-4 py-4 rounded-xl border border-gray-200 bg-gray-50 focus:border-brand focus:ring-2 focus:ring-brand/20 focus:bg-white focus:outline-none transition-all text-center tracking-[1em] text-2xl font-mono" 
                 placeholder="000000"
                 required 
               />
             </div>
           )}
 
-          <button 
-            type="submit" 
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            className="w-full mt-2"
             disabled={loading}
-            className="w-full py-3 bg-primary text-white rounded-pill font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 mt-4"
           >
-            {loading ? 'Processing...' : mode === 'login' ? 'Sign In' : mode === 'register' ? 'Sign Up & Send Code' : 'Verify Code'}
-          </button>
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin mr-2" /> Processing...
+              </>
+            ) : mode === 'login' ? 'Sign In' : mode === 'register' ? 'Sign Up & Send Code' : 'Verify Code'}
+          </Button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-text-muted">
+        {/* Footer */}
+        <div className="mt-8 text-center text-sm text-gray-500">
           {mode === 'login' ? (
-            <p>Don't have an account? <button onClick={() => { setMode('register'); setError(''); setMessage(''); }} className="text-primary font-bold hover:underline">Sign up</button></p>
+            <p>Don't have an account? <button onClick={() => { setMode('register'); setError(''); setMessage(''); }} className="text-brand font-semibold hover:underline">Sign up</button></p>
           ) : mode === 'register' ? (
-            <p>Already have an account? <button onClick={() => { setMode('login'); setError(''); setMessage(''); }} className="text-primary font-bold hover:underline">Sign in</button></p>
+            <p>Already have an account? <button onClick={() => { setMode('login'); setError(''); setMessage(''); }} className="text-brand font-semibold hover:underline">Sign in</button></p>
           ) : (
-            <p>Wrong email? <button onClick={() => { setMode('login'); setFormData({...formData, otp: ''}); }} className="text-primary font-bold hover:underline">Go back</button></p>
+            <p>Wrong email? <button onClick={() => { setMode('login'); setFormData({...formData, otp: ''}); }} className="text-brand font-semibold hover:underline">Go back</button></p>
           )}
         </div>
       </div>

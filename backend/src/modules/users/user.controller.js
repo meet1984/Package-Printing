@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const User = require('./user.model');
 const bcrypt = require('bcryptjs');
 const { sendMail } = require('../../utils/emailService');
+const { generateOtpEmail, generateAdminOtpEmail } = require('../../utils/emailTemplates');
 const { JWT_SECRET } = require('../../config/env');
 
 const generateOTP = () => {
@@ -39,8 +40,8 @@ exports.register = async (req, res, next) => {
     // Send email
     await sendMail({
       to: email,
-      subject: 'Verify your email - P&P',
-      html: `<p>Your verification code is: <strong>${otp}</strong></p><p>This code expires in 10 minutes.</p>`,
+      subject: 'Verify your email - Zeprr',
+      html: generateOtpEmail(otp),
     });
 
     res.json({ message: 'OTP sent to email', email });
@@ -122,8 +123,8 @@ exports.login = async (req, res, next) => {
 
         await sendMail({
           to: user.email,
-          subject: 'Admin Login Code - P&P',
-          html: `<p>Your admin login code is: <strong>${newOtp}</strong></p><p>This code expires in 10 minutes.</p>`,
+          subject: 'Admin Login Code - Zeprr',
+          html: generateAdminOtpEmail(newOtp),
         });
 
         return res.json({ message: 'OTP sent to email', requireOTP: true });

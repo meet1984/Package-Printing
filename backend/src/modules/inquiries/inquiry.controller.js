@@ -3,7 +3,7 @@ const InquiryItem = require('./inquiryItem.model');
 const Product = require('../products/product.model');
 const sequelize = require('../../config/db');
 const { sendMail } = require('../../utils/emailService');
-
+const { generateQuoteConfirmationEmail, generateAdminInquiryEmail } = require('../../utils/emailTemplates');
 const escapeHtml = (unsafe) => {
   if (unsafe === null || unsafe === undefined) return '';
   return String(unsafe)
@@ -78,6 +78,24 @@ exports.createInquiry = async (req, res, next) => {
       await InquiryItem.bulkCreate(inquiryItemsData, { transaction: t });
     }
 
+    // Fetch product details for itemsHtml
+    let itemsHtml = '<p>No specific products requested.</p>';
+    if (parsedItems.length > 0) {
+      const productIds = parsedItems.map(item => item.product_id).filter(Boolean);
+      let products = [];
+      if (productIds.length > 0) {
+        products = await Product.findAll({ where: { id: productIds }, transaction: t });
+      }
+      const productMap = {};
+      products.forEach(p => productMap[p.id] = p);
+
+      itemsHtml = parsedItems.map(item => {
+        const product = productMap[item.product_id];
+        const productName = product ? product.name : (item.product_id ? `Product ID: ${item.product_id}` : 'General Inquiry');
+        return `<li><strong>${escapeHtml(productName)}</strong> - Qty: ${escapeHtml(item.quantity)} - Variant: ${escapeHtml(item.variant_details || item.variant) || 'N/A'} - Notes: ${escapeHtml(item.notes) || 'N/A'}</li>`;
+      }).join('');
+    }
+
     // Commit transaction
     await t.commit();
 
@@ -114,23 +132,24 @@ exports.createInquiry = async (req, res, next) => {
       const safeCompany = escapeHtml(company) || 'N/A';
       const safeMessage = escapeHtml(message) || 'N/A';
       const safeDepartment = escapeHtml(department);
-
-      let itemsHtml = parsedItems.length > 0 ? parsedItems.map(item => `<li>Product ID: ${escapeHtml(item.product_id)} - Qty: ${escapeHtml(item.quantity)} - Variant: ${escapeHtml(item.variant_details || item.variant) || 'N/A'} - Notes: ${escapeHtml(item.notes) || 'N/A'}</li>`).join('') : '<p>No specific products requested.</p>';
       
       await sendMail({
         to: adminEmail,
         subject: `New ${safeDepartment.toUpperCase()} Request from ${safeName}`,
-        html: `
-          <h3>New Request (${safeDepartment})</h3>
-          <p><strong>Name:</strong> ${safeName}</p>
-          <p><strong>Email:</strong> ${safeEmail}</p>
-          <p><strong>Phone:</strong> ${safePhone}</p>
-          <p><strong>Company:</strong> ${safeCompany}</p>
-          <p><strong>Message:</strong> ${safeMessage}</p>
-          ${attachHtml}
-          <h4>Requested Items:</h4>
-          <ul>${itemsHtml}</ul>
-        `,
+        html: generateAdminInquiryEmail(
+          {
+            department: safeDepartment,
+            name: safeName,
+            email: safeEmail,
+            phone: safePhone,
+            company: safeCompany,
+            message: safeMessage,
+            attachment_url
+          },
+          itemsHtml,
+          !!attachment_url,
+          apiUrl
+        ),
         attachments
       });
     }
@@ -139,13 +158,8 @@ exports.createInquiry = async (req, res, next) => {
     const safeNameClient = escapeHtml(name);
     await sendMail({
       to: email,
-      subject: `Quote Request Received - P&P Packaging`,
-      html: `
-        <h3>Thank you for your quote request, ${safeNameClient}!</h3>
-        <p>We have received your request and our team will get back to you within 24 hours.</p>
-        <p>If you have any urgent questions, feel free to reply to this email or contact us directly.</p>
-        ${clientAttachHtml}
-      `,
+      subject: `Quote Request Received - Zeprr Packaging`,
+      html: generateQuoteConfirmationEmail(safeNameClient, !!attachment_url, itemsHtml),
       attachments
     });
 

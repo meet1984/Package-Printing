@@ -45,18 +45,18 @@ const AdminProducts = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-black font-display text-neutral">Products</h1>
+        <h1 className="text-3xl font-semibold font-display text-gray-900">Products</h1>
         <Link 
           to="/admin/products/new"
-          className="px-6 py-2 bg-primary text-white rounded-xl font-medium"
+          className="px-6 py-2 bg-brand text-white rounded-xl font-medium"
         >
           Add Product
         </Link>
       </div>
 
-      <div className="bg-surface border border-border rounded-2xl overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
         <table className="w-full text-left">
-          <thead className="bg-kraft/10 border-b border-border">
+          <thead className="bg-kraft/10 border-b border-gray-200">
             <tr>
               <th className="px-6 py-4 font-bold">Product</th>
               <th className="px-6 py-4 font-bold">Template</th>
@@ -74,26 +74,26 @@ const AdminProducts = () => {
                     </div>
                     <div>
                       <div className="font-medium">{product.name}</div>
-                      <div className="text-xs text-neutral/50">{product.slug}</div>
+                      <div className="text-xs text-gray-500">{product.slug}</div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-neutral/80">
+                <td className="px-6 py-4 text-sm text-gray-500">
                   {product.Template ? product.Template.name : <span className="italic opacity-50">None</span>}
                 </td>
                 <td className="px-6 py-4">
                   {product.is_active ? 
                     <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-bold">Active</span> : 
-                    <span className="px-2 py-1 bg-neutral/10 text-neutral text-xs rounded-full font-bold">Draft</span>}
+                    <span className="px-2 py-1 bg-neutral/10 text-gray-900 text-xs rounded-full font-bold">Draft</span>}
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <Link to={`/admin/products/edit/${product.slug}`} className="text-primary hover:underline mr-4">Edit</Link>
+                  <Link to={`/admin/products/edit/${product.slug}`} className="text-brand hover:underline mr-4">Edit</Link>
                   <button onClick={() => handleDelete(product.id)} className="text-red-500 hover:underline">Delete</button>
                 </td>
               </tr>
             ))}
             {products.length === 0 && (
-              <tr><td colSpan="4" className="text-center py-8 text-neutral/50">No products found.</td></tr>
+              <tr><td colSpan="4" className="text-center py-8 text-gray-500">No products found.</td></tr>
             )}
           </tbody>
         </table>

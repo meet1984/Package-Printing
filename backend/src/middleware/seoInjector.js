@@ -18,7 +18,7 @@ const seoInjector = async (req, res, next) => {
       return next();
     }
 
-    let title = 'P&P | Custom Printing & Packaging';
+    let title = 'Zeprr | Custom Printing & Packaging';
     let description = 'Premium custom printing and packaging solutions for your brand.';
 
     try {
@@ -27,13 +27,13 @@ const seoInjector = async (req, res, next) => {
         if (slug) {
           const product = await Product.findOne({ where: { slug, is_active: true } });
           if (product) {
-            title = product.meta_title || `${product.name} | P&P`;
+            title = product.meta_title || `${product.name} | Zeprr`;
             description = product.meta_description || product.description?.substring(0, 160) || description;
           }
         }
       } else if (req.path === '/about') {
-        title = 'About Us | P&P';
-        description = 'Learn more about P&P - your partner in custom printing and packaging.';
+        title = 'About Us | Zeprr';
+        description = 'Learn more about Zeprr - your partner in custom printing and packaging.';
       }
     } catch (e) {
       console.error('SEO Injector error:', e);

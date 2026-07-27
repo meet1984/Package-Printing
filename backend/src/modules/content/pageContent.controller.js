@@ -8,7 +8,7 @@ exports.getPageContent = async (req, res, next) => {
     });
     
     if (!page) {
-      return res.status(404).json({ message: 'Page content not found' });
+      return res.json({ content: null });
     }
     res.json(page);
   } catch (error) {

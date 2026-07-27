@@ -21,6 +21,7 @@ require('./modules/about/statCounter.model');
 require('./modules/about/valueProp.model');
 require('./modules/about/processPillar.model');
 require('./modules/about/partnerBrand.model');
+require('./modules/homepage/homeScroller.model');
 require('./modules/users/user.model');
 
 const PORT = process.env.PORT || 5000;

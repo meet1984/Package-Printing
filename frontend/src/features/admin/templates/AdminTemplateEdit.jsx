@@ -8,6 +8,7 @@ import { useToast } from '../../../shared/store/useToast';
 import { useAuth } from '../../../shared/store/useAuth';
 import { renderMockupCanvas } from '../../../shared/utils/renderMockup';
 import { getImageUrl } from '../../../shared/utils/getImageUrl';
+import AdminImageDropzone from '../components/AdminImageDropzone';
 
 const DEFAULT_CONSTRAINTS = { minScale: 0.5, maxScale: 1.5, minRotation: -20, maxRotation: 20 };
 const DEFAULT_PRINT_AREA = { x: 0.25, y: 0.25, width: 0.5, height: 0.5, rotation: 0 };
@@ -388,16 +389,17 @@ export default function AdminTemplateEdit() {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Print Area Setup ({activeFace.name})</h3>
               <div className="flex gap-2">
-                <button 
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-sm flex items-center gap-1 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-md transition-colors"
+                <AdminImageDropzone 
+                  onDrop={(e) => handleImageUpload(e, 'base')}
+                  className="px-3 py-1 bg-gray-50 border-gray-200"
                 >
-                  <Upload size={16} /> Base Image
-                </button>
+                  <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <Upload size={16} /> Base Image (Drop)
+                  </div>
+                </AdminImageDropzone>
               </div>
             </div>
             
-            <input type="file" ref={fileInputRef} onChange={(e) => handleImageUpload(e, 'base')} className="hidden" accept="image/*" />
             <input type="file" ref={shadingInputRef} onChange={(e) => handleImageUpload(e, 'shading')} className="hidden" accept="image/*" />
             
             <p className="text-sm text-gray-500 mb-4">Drag the blue box to define where designs will be placed. Drag corners to resize, use top handle to rotate.</p>

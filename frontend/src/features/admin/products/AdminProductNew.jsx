@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../shared/store/useAuth';
 import { useToast } from '../../../shared/store/useToast';
+import AdminImageDropzone from '../components/AdminImageDropzone';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -123,69 +124,69 @@ const AdminProductNew = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-black font-display text-neutral mb-8">Add New Product</h1>
+      <h1 className="text-3xl font-semibold font-display text-gray-900 mb-8">Add New Product</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <form onSubmit={handleSubmit} className="bg-surface p-8 rounded-2xl border border-border">
+          <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl border border-gray-200">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label className="block text-sm font-bold text-neutral/70 mb-2">Name</label>
-                <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full bg-base border border-border rounded-xl px-4 py-3 focus:outline-none focus:border-primary" />
+                <label className="block text-sm font-bold text-gray-500 mb-2">Name</label>
+                <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-clay" />
               </div>
               <div>
-                <label className="block text-sm font-bold text-neutral/70 mb-2">Category</label>
-                <select name="category_id" value={formData.category_id} onChange={handleChange} required className="w-full bg-base border border-border rounded-xl px-4 py-3 focus:outline-none focus:border-primary">
+                <label className="block text-sm font-bold text-gray-500 mb-2">Category</label>
+                <select name="category_id" value={formData.category_id} onChange={handleChange} required className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-clay">
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-bold text-neutral/70 mb-2">Description</label>
-              <textarea name="description" value={formData.description} onChange={handleChange} rows="4" className="w-full bg-base border border-border rounded-xl px-4 py-3 focus:outline-none focus:border-primary"></textarea>
+              <label className="block text-sm font-bold text-gray-500 mb-2">Description</label>
+              <textarea name="description" value={formData.description} onChange={handleChange} rows="4" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-clay"></textarea>
             </div>
 
 
 
             <div className="mb-8">
               <label className="flex items-center space-x-3 cursor-pointer mb-4">
-                <input type="checkbox" name="is_active" checked={formData.is_active} onChange={handleChange} className="w-5 h-5 text-primary focus:ring-primary border-border rounded" />
-                <span className="text-sm font-bold text-neutral">Active (visible on public site)</span>
+                <input type="checkbox" name="is_active" checked={formData.is_active} onChange={handleChange} className="w-5 h-5 text-brand focus:ring-primary border-gray-200 rounded" />
+                <span className="text-sm font-bold text-gray-900">Active (visible on public site)</span>
               </label>
 
-              <label className="block text-sm font-bold text-neutral/70 mb-2 mt-4">Image Alt Text (Accessibility)</label>
-              <input type="text" name="image_alt" value={formData.image_alt} onChange={handleChange} placeholder="Describe the product image" className="w-full bg-base border border-border rounded-xl px-4 py-3 focus:outline-none focus:border-primary text-neutral mb-4" />
+              <label className="block text-sm font-bold text-gray-500 mb-2 mt-4">Image Alt Text (Accessibility)</label>
+              <input type="text" name="image_alt" value={formData.image_alt} onChange={handleChange} placeholder="Describe the product image" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-clay text-gray-900 mb-4" />
 
               <label className="flex items-center space-x-3 cursor-pointer mb-4">
-                <input type="checkbox" name="show_in_home_scroll" checked={formData.show_in_home_scroll} onChange={handleChange} className="w-5 h-5 text-primary focus:ring-primary border-border rounded" />
-                <span className="text-sm font-bold text-neutral">Show in homepage scroll</span>
+                <input type="checkbox" name="show_in_home_scroll" checked={formData.show_in_home_scroll} onChange={handleChange} className="w-5 h-5 text-brand focus:ring-primary border-gray-200 rounded" />
+                <span className="text-sm font-bold text-gray-900">Show in homepage scroll</span>
               </label>
 
               {formData.show_in_home_scroll && (
                 <div className="mt-4">
-                  <label className="block text-sm font-bold text-neutral/70 mb-2">Homepage Scroll Order</label>
-                  <input type="number" name="home_scroll_order" value={formData.home_scroll_order} onChange={handleChange} className="w-full bg-base border border-border rounded-xl px-4 py-3 focus:outline-none focus:border-primary" />
+                  <label className="block text-sm font-bold text-gray-500 mb-2">Homepage Scroll Order</label>
+                  <input type="number" name="home_scroll_order" value={formData.home_scroll_order} onChange={handleChange} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-clay" />
                 </div>
               )}
             </div>
 
             <div className="flex justify-end space-x-4">
-              <button type="button" onClick={() => navigate('/admin/products')} className="px-6 py-3 bg-kraft/10 text-neutral rounded-xl font-medium hover:bg-kraft/20 transition-colors">Cancel</button>
-              <button type="submit" className="px-6 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-colors">Create Product</button>
+              <button type="button" onClick={() => navigate('/admin/products')} className="px-6 py-3 bg-kraft/10 text-gray-900 rounded-xl font-medium hover:bg-kraft/20 transition-colors">Cancel</button>
+              <button type="submit" className="px-6 py-3 bg-brand text-white rounded-xl font-medium hover:bg-brand/90 transition-colors">Create Product</button>
             </div>
           </form>
         </div>
 
         {/* Sidebar for Media & Variants (Mirrors Edit Product) */}
         <div className="space-y-6">
-          <div className="bg-surface p-6 rounded-2xl border border-border">
+          <div className="bg-white p-6 rounded-2xl border border-gray-200">
             <h3 className="font-bold mb-4">Images</h3>
             <div className="grid grid-cols-2 gap-4 mb-4">
               {formData.images?.map(img => (
-                <div key={img.id} className="aspect-square bg-kraft/10 rounded-lg overflow-hidden border border-border relative group">
+                <div key={img.id} className="aspect-square bg-kraft/10 rounded-lg overflow-hidden border border-gray-200 relative group">
                   <img src={img.url} alt="" className="w-full h-full object-cover" />
-                  {img.is_primary && <span className="absolute top-1 left-1 bg-primary text-white text-[10px] px-2 py-0.5 rounded-full font-bold">Primary</span>}
+                  {img.is_primary && <span className="absolute top-1 left-1 bg-brand text-white text-[10px] px-2 py-0.5 rounded-full font-bold">Primary</span>}
                   <button 
                     onClick={() => handleDeleteImage(img.id)}
                     className="absolute inset-0 bg-black/50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-sm font-bold"
@@ -195,24 +196,26 @@ const AdminProductNew = () => {
                 </div>
               ))}
             </div>
-            <button 
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full py-2 border-2 border-dashed border-border rounded-xl text-neutral/60 font-medium hover:border-primary hover:text-primary transition-colors text-sm"
+            <AdminImageDropzone 
+              onDrop={handleImageUpload} 
+              className="w-full py-8 flex flex-col items-center justify-center text-gray-500 hover:text-brand bg-gray-50"
             >
-              + Upload Image
-            </button>
-            <input type="file" ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*" />
-            <p className="text-xs text-neutral/50 mt-3 text-center">Images will be saved when you click "Create Product".</p>
+              <svg className="w-8 h-8 mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <span className="font-medium text-sm">Click or Drag & Drop to Upload</span>
+            </AdminImageDropzone>
+            <p className="text-xs text-gray-500 mt-3 text-center">Images will be saved when you click "Create Product".</p>
           </div>
           
-          <div className="bg-surface p-6 rounded-2xl border border-border">
+          <div className="bg-white p-6 rounded-2xl border border-gray-200">
             <h3 className="font-bold mb-1">Mockup Template</h3>
-            <p className="text-xs text-neutral/50 mb-3">Optional – link a template so customers can preview their logo on this product.</p>
+            <p className="text-xs text-gray-500 mb-3">Optional – link a template so customers can preview their logo on this product.</p>
             <select
               name="templateId"
               value={formData.templateId}
               onChange={handleChange}
-              className="w-full bg-base border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-clay"
             >
               <option value="">None (no mockup)</option>
               {templates.map(t => (
@@ -221,10 +224,10 @@ const AdminProductNew = () => {
             </select>
           </div>
 
-          <div className="bg-surface p-6 rounded-2xl border border-border">
+          <div className="bg-white p-6 rounded-2xl border border-gray-200">
             <h3 className="font-bold mb-4">Variants</h3>
-            <p className="text-sm text-neutral/60 italic mb-4">Variants can be added after the product is created.</p>
-            <button disabled className="w-full py-2 bg-kraft/10 text-neutral/50 rounded-xl font-medium cursor-not-allowed text-sm">
+            <p className="text-sm text-gray-500 italic mb-4">Variants can be added after the product is created.</p>
+            <button disabled className="w-full py-2 bg-kraft/10 text-gray-500 rounded-xl font-medium cursor-not-allowed text-sm">
               Add Variant (Save First)
             </button>
           </div>

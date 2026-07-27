@@ -6,6 +6,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 export const useAuth = create((set, get) => ({
   user: null,
   isAuthenticated: false,
+  token: null,
   loading: false,
   error: null,
 
@@ -22,6 +23,7 @@ export const useAuth = create((set, get) => ({
       set({ 
         user: response.data.user, 
         isAuthenticated: true, 
+        token: true,
         loading: false 
       });
       return { success: true };
@@ -41,10 +43,11 @@ export const useAuth = create((set, get) => ({
       set({ 
         user: response.data.user, 
         isAuthenticated: !!response.data.user, 
+        token: !!response.data.user,
         loading: false 
       });
     } catch (err) {
-      set({ user: null, isAuthenticated: false, loading: false });
+      set({ user: null, isAuthenticated: false, token: null, loading: false });
     }
   },
 
@@ -54,6 +57,6 @@ export const useAuth = create((set, get) => ({
     } catch (error) {
       console.error('Logout error', error);
     }
-    set({ user: null, isAuthenticated: false });
+    set({ user: null, isAuthenticated: false, token: null });
   }
 }));

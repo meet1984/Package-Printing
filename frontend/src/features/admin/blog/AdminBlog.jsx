@@ -3,6 +3,8 @@ import axios from 'axios';
 import imageCompression from 'browser-image-compression';
 import { useAuth } from '../../../shared/store/useAuth';
 import { useToast } from '../../../shared/store/useToast';
+import AdminImageDropzone from '../components/AdminImageDropzone';
+import { getImageUrl } from '../../../shared/utils/getImageUrl';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -110,11 +112,11 @@ const AdminBlog = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold font-heading">Manage Blog Posts</h1>
+        <h1 className="text-2xl font-bold font-display">Manage Blog Posts</h1>
         {!isEditing && (
           <button 
             onClick={() => setIsEditing(true)}
-            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition"
+            className="px-4 py-2 bg-brand text-white rounded hover:bg-brand/90 transition"
           >
             Create Post
           </button>
@@ -122,7 +124,7 @@ const AdminBlog = () => {
       </div>
 
       {isEditing ? (
-        <form onSubmit={handleSubmit} className="bg-surface p-6 rounded shadow max-w-2xl">
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow max-w-2xl">
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-bold mb-1">Title</label>
@@ -174,13 +176,12 @@ const AdminBlog = () => {
                   onChange={e => setFormData({...formData, cover_image: e.target.value})}
                   className="w-full border rounded p-2"
                 />
-                <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 border rounded px-4 py-2 flex items-center whitespace-nowrap">
-                  {uploading ? 'Uploading...' : 'Upload Image'}
-                  <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
-                </label>
+                <AdminImageDropzone onDrop={handleImageUpload} disabled={uploading} className="bg-gray-100 hover:bg-gray-200 border rounded px-4 py-2 flex items-center whitespace-nowrap min-w-[150px] justify-center">
+                  <span className="text-sm font-medium">{uploading ? 'Uploading...' : 'Upload or Drag & Drop'}</span>
+                </AdminImageDropzone>
               </div>
               {formData.cover_image && (
-                <img src={formData.cover_image.startsWith('http') ? formData.cover_image : `http://localhost:5000${formData.cover_image}`} alt="Preview" className="h-20 mt-2 object-cover rounded" />
+                <img src={getImageUrl(formData.cover_image)} alt="Preview" className="h-20 mt-2 object-cover rounded" />
               )}
             </div>
             <div className="flex items-center">
@@ -194,7 +195,7 @@ const AdminBlog = () => {
             </div>
           </div>
           <div className="mt-6 flex gap-4">
-            <button type="submit" className="px-4 py-2 bg-primary text-white rounded">Save Post</button>
+            <button type="submit" className="px-4 py-2 bg-brand text-white rounded">Save Post</button>
             <button type="button" onClick={() => {
               setIsEditing(false);
               setFormData({ title: '', slug: '', meta_description: '', content: '', cover_image: '', is_published: false });
@@ -202,7 +203,7 @@ const AdminBlog = () => {
           </div>
         </form>
       ) : (
-        <div className="bg-surface rounded shadow overflow-hidden">
+        <div className="bg-white rounded shadow overflow-hidden">
           <table className="w-full text-left">
             <thead className="bg-gray-50 border-b">
               <tr>

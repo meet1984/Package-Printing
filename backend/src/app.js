@@ -40,6 +40,7 @@ app.use('/api/inquiries', require('./modules/inquiries/inquiry.routes'));
 app.use('/api/stats', require('./modules/stats/stats.routes'));
 app.use('/api/homepage', require('./modules/homepage/homepage.routes'));
 app.use('/api/hero-banners', require('./modules/homepage/heroBanner.routes'));
+app.use('/api/home-scrollers', require('./modules/homepage/homeScroller.routes'));
 app.use('/api/blog-posts', require('./modules/content/blogPost.routes'));
 app.use('/api/about', require('./modules/about/about.routes'));
 app.use('/api/users', require('./modules/users/user.routes'));

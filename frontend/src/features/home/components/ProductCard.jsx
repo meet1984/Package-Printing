@@ -1,33 +1,43 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 
-const ProductCard = ({ product }) => {
-  const primaryImage = product.images?.find(img => img.is_primary)?.url 
-    || product.images?.[0]?.url 
-    || 'https://via.placeholder.com/400';
+const ProductCard = ({ product, index, isQuoteCard = false }) => {
+  const primaryImage = product.images?.find(img => img.is_primary)?.url
+    || product.images?.[0]?.url
+    || null;
 
   return (
-    <Link 
-      to={`/product/${product.Category?.slug || 'all'}/${product.slug}`} 
-      className="w-full group block bg-surface card-lifted rounded-[var(--radius-card)] border border-transparent p-3 transition-all duration-300 hover:-translate-y-[5px] hover:border-border"
+    <Link
+      to={`/product/${product.Category?.slug || 'misc'}/${product.slug}`}
+      className="w-full block group"
+      draggable={false}
     >
-      <div className="block relative aspect-square md:aspect-[4/5] overflow-hidden rounded-[calc(var(--radius-card)-0.25rem)] mb-4">
-        <img 
-          src={primaryImage} 
-          alt={product.image_alt || product.name} 
-          className="w-full h-full object-cover transition-transform duration-[400ms] ease-out group-hover:scale-[1.15]"
-        />
-        {product.is_new && (
-          <div className="absolute top-4 right-4 badge-stamp badge-stamp-orange">
-            New
+      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-gray-100">
+        {primaryImage ? (
+          <img
+            src={primaryImage}
+            alt={product.image_alt || product.name}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-[var(--duration-slow)] ease-[var(--ease-out)] group-hover:scale-105 pointer-events-none"
+            draggable={false}
+            loading="lazy"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-100 flex items-center justify-center pointer-events-none">
+            <span className="text-gray-400 text-sm">No image</span>
           </div>
         )}
+        {/* Subtle bottom gradient on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-[var(--duration-normal)] pointer-events-none" />
       </div>
-      
-      <div className="space-y-1">
-        <h3 className="font-bold text-text group-hover:text-primary transition-colors line-clamp-1">{product.name}</h3>
-        <span className="inline-block mt-2 text-sm font-bold text-primary transition-colors">
-          Request a Quote →
+
+      <div className="pt-3 space-y-1">
+        <h4 className="font-display font-semibold text-base text-gray-900 leading-snug line-clamp-1 group-hover:text-brand transition-colors duration-[var(--duration-fast)]">
+          {product.name}
+        </h4>
+        <span className="inline-flex items-center gap-1 text-sm font-medium text-brand group-hover:gap-1.5 transition-all duration-[var(--duration-fast)]">
+          {isQuoteCard ? 'Request a quote' : 'View product'}
+          <ArrowRight className="w-3.5 h-3.5" />
         </span>
       </div>
     </Link>

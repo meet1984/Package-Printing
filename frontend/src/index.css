@@ -1,136 +1,249 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════
+   ZEPRR DESIGN SYSTEM — Single Source of Truth
+   ═══════════════════════════════════════════════════════════ */
+
 @theme {
-  /* Colors -- "Kraft & Craft": tactile, paper-based, printing/packaging brand */
-  --color-primary: #A6402A; /* muted terracotta "stamp red" -- small ink accent only, buttons/badges/links, never backgrounds */
-  --color-accent: #A6402A;
-  --color-accent-orange: #F1953D; /* sourced from the brand mark -- minimal secondary detail only, never a dominant color */
+  /* ─── Neutral Scale ────────────────────────────────────── */
+  --color-gray-50:  #FAFAF9;
+  --color-gray-100: #F5F4F2;
+  --color-gray-200: #E8E6E3;
+  --color-gray-300: #D4D1CC;
+  --color-gray-400: #A8A29E;
+  --color-gray-500: #78716C;
+  --color-gray-600: #57534E;
+  --color-gray-700: #44403C;
+  --color-gray-800: #292524;
+  --color-gray-900: #1C1917;
+  --color-gray-950: #0F0E0D;
 
-  --color-ink: #2A2118; /* ink black -- warmer than pure black */
-  --color-heading: #2A2118;
-  --color-text: #2A2118;
-  --color-text-muted: #6B6259; /* warmed-up gray to sit with the kraft palette */
+  /* ─── Brand ────────────────────────────────────────────── */
+  --color-brand:        #B34A1E;
+  --color-brand-hover:  #9A3F18;
+  --color-brand-subtle: #FEF3EE;
 
-  --color-kraft: #E3D7C5; /* dominant background tone for alternate sections */
-  --color-bg-alt: #E3D7C5; /* alias so existing bg-alt usage across the site now reads as kraft */
-  --color-cardboard: #8B6F47; /* deeper cardboard brown -- dark sections, footers, strong accents */
-  --color-bg-dark: #1B0F2E;
+  /* ─── Legacy aliases (so existing Tailwind classes don't break) ─ */
+  --color-paper:     #FAFAF9;
+  --color-paper-2:   #FFFFFF;
+  --color-kraft:     #E8E6E3;
+  --color-ink:       #1C1917;
+  --color-ink-soft:  #57534E;
+  --color-clay:      #B34A1E;
+  --color-clay-dark: #9A3F18;
+  --color-moss:      #3D6B50;
+  --color-moss-dark: #2D5240;
+  --color-gold:      #B8862E;
+  --color-gold-dark: #8A6420;
 
-  --color-base: #FBF8F2; /* warm paper white page background, not stark white */
-  --color-surface: #FDFBF8; /* warm off-white card/surface tone, not pure white */
-  --color-border: #E2D6C4; /* warmed border to match kraft/cardboard */
-  --color-neutral: #2D2D2D;
+  /* ─── Semantic ─────────────────────────────────────────── */
+  --color-success:    #16A34A;
+  --color-success-bg: #F0FDF4;
+  --color-warning:    #CA8A04;
+  --color-warning-bg: #FEFCE8;
+  --color-danger:     #DC2626;
+  --color-danger-bg:  #FEF2F2;
 
-  /* Fonts */
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-display: 'Fraunces', 'Georgia', serif;
-  --font-heading: 'Fraunces', 'Georgia', serif;
+  /* ─── Fonts ────────────────────────────────────────────── */
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Instrument Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 
-  /* Radii */
-  --radius-card: 9px; /* slightly squarer -- reads more printed/crafted than "rounded SaaS" */
-  --radius-stamp: 10px;
-  --radius-pill: 999px;
+  /* ─── Radius (3-step) ──────────────────────────────────── */
+  --radius-sm:   6px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-full: 9999px;
+
+  /* Legacy aliases */
+  --radius-card:   12px;
+  --radius-button: 10px;
+  --radius-input:  10px;
+
+  /* ─── Shadow (5-step) ──────────────────────────────────── */
+  --shadow-xs:  0 1px 2px rgba(0,0,0,0.05);
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:  0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg:  0 12px 32px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.04);
+  --shadow-xl:  0 20px 48px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.06);
+
+  /* ─── Motion ───────────────────────────────────────────── */
+  --duration-fast:   150ms;
+  --duration-normal: 250ms;
+  --duration-slow:   400ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ─── Spacing (section rhythm) ─────────────────────────── */
+  --spacing-section-y:    6rem;
+  --spacing-section-y-sm: 4rem;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   BASE LAYER
+   ═══════════════════════════════════════════════════════════ */
 
 @layer base {
-  body {
-    @apply bg-base text-text font-body antialiased;
+  *,
+  *::before,
+  *::after {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-heading tracking-tight text-heading;
+
+  body {
+    @apply bg-gray-50 text-gray-900 font-body;
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ─── Typography ───────────────────────────────────────── */
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--color-gray-900);
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    color: var(--color-gray-900);
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--color-gray-900);
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+  }
+
+  h4, h5, h6 {
+    @apply font-display font-medium tracking-tight text-gray-900;
+  }
+
+  /* ─── Focus ────────────────────────────────────────────── */
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* ─── Selection ────────────────────────────────────────── */
+  ::selection {
+    background-color: var(--color-brand-subtle);
+    color: var(--color-brand);
+  }
+
+  /* ─── Scrollbar ────────────────────────────────────────── */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-gray-300);
+    border-radius: var(--radius-full);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-gray-400);
   }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   UTILITY LAYER
+   ═══════════════════════════════════════════════════════════ */
+
 @layer utilities {
-  /* Subtle paper-grain overlay -- apply alongside a bg-* color class, e.g.
-     <section class="bg-kraft paper-texture"> */
-  .paper-texture {
-    position: relative;
-    background-image: url("./assets/paper-grain.svg");
-    background-repeat: repeat;
-    background-size: 140px 140px;
-  }
 
-  /* "Stamp"/badge pattern -- category tags, "New" labels, trust badges.
-     Rotated slightly with a dashed border, like an ink stamp. */
-  .badge-stamp {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.3rem 0.75rem;
-    font-size: 0.7rem;
+  /* ─── Text Display (hero-level) ────────────────────────── */
+  .text-display {
+    font-family: var(--font-display);
     font-weight: 700;
-    letter-spacing: 0.04em;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--color-gray-900);
+  }
+
+  /* ─── Label (mono uppercase) ───────────────────────────── */
+  .text-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--color-ink);
-    background-color: var(--color-surface);
-    border: 1.5px dashed var(--color-cardboard);
-    border-radius: var(--radius-stamp);
-    transform: rotate(-3deg);
-    box-shadow: 0 1px 0 rgba(139, 111, 71, 0.15);
+    color: var(--color-gray-500);
   }
 
-  /* Deliberate, singular use of the orange brand accent -- reserve for one
-     highlight badge type ("New" / "Popular"), not a repeated pattern. */
-  .badge-stamp-orange {
-    color: var(--color-accent-orange);
-    border-color: var(--color-accent-orange);
-    background-color: color-mix(in srgb, var(--color-accent-orange) 10%, var(--color-surface));
+  /* ─── Shadow utilities ─────────────────────────────────── */
+  .shadow-soft {
+    box-shadow: var(--shadow-sm);
   }
 
-  /* Torn/perforated paper edge -- use as a section divider instead of a
-     plain straight boundary. Color the strip to match the section that
-     sits BELOW the divider (the section it "tears into"). */
-  .torn-edge-top,
-  .torn-edge-top-surface {
-    position: relative;
+  .shadow-elevated {
+    box-shadow: var(--shadow-md);
   }
-  .torn-edge-top::before,
-  .torn-edge-top-surface::before {
+
+  /* ─── Kraft tag (legacy — refined) ─────────────────────── */
+  .kraft-tag {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm border border-gray-200 bg-white text-gray-600;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .kraft-tag::before {
     content: '';
-    position: absolute;
-    top: -11px;
-    left: 0;
-    right: 0;
-    height: 20px;
-    background-color: var(--color-kraft);
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='20' viewBox='0 0 24 20'%3E%3Cpath d='M0 20 L0 8 L4 13 L8 6 L12 14 L16 5 L20 12 L24 7 L24 20 Z'/%3E%3C/svg%3E");
-    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='20' viewBox='0 0 24 20'%3E%3Cpath d='M0 20 L0 8 L4 13 L8 6 L12 14 L16 5 L20 12 L24 7 L24 20 Z'/%3E%3C/svg%3E");
-    -webkit-mask-repeat: repeat-x;
-    mask-repeat: repeat-x;
-    -webkit-mask-size: 24px 20px;
-    mask-size: 24px 20px;
-    pointer-events: none;
-    z-index: 1;
-  }
-  .torn-edge-top-surface::before {
-    background-color: var(--color-surface);
+    @apply w-1.5 h-1.5 rounded-full bg-brand;
   }
 
-  /* Physical, lifted-card shadow -- a card resting on a surface, not a
-     generic soft SaaS shadow. */
-  .card-lifted {
-    box-shadow: 0 1px 2px rgba(42, 33, 24, 0.06), 0 10px 24px -8px rgba(42, 33, 24, 0.18);
+  /* ─── No scrollbar ─────────────────────────────────────── */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 
-  /* Wax-seal / stamp button -- solid fill, slight shadow, satisfying
-     press-down active state. Use with a bg color (bg-primary etc.). */
-  .btn-stamp {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-stamp);
-    box-shadow: 0 3px 0 rgba(42, 33, 24, 0.25), 0 6px 14px -4px rgba(42, 33, 24, 0.35);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  /* ─── Skeleton animation ───────────────────────────────── */
+  .skeleton {
+    @apply bg-gray-200 rounded-md animate-pulse;
   }
-  .btn-stamp:hover {
-    transform: translateY(-1px);
+
+  /* ─── Glass effect ─────────────────────────────────────── */
+  .glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
-  .btn-stamp:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 rgba(42, 33, 24, 0.25), 0 2px 6px -2px rgba(42, 33, 24, 0.35);
+
+  /* ─── Section container ────────────────────────────────── */
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+
+  /* ─── Smooth link underline ────────────────────────────── */
+  .link-underline {
+    @apply relative inline-block;
+  }
+  .link-underline::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-px bg-current transition-all duration-300;
+  }
+  .link-underline:hover::after {
+    @apply w-full;
   }
 }

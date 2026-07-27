@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Upload } from 'lucide-react';
 import { useAuth } from '../../../shared/store/useAuth';
 import { useToast } from '../../../shared/store/useToast';
+import AdminImageDropzone from '../components/AdminImageDropzone';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -78,14 +79,14 @@ const CrudSection = ({ title, endpoint, fields, token, refreshKey }) => {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">{title}</h2>
         {!isEditing && (
-          <button onClick={() => { setFormData(emptyForm()); setIsEditing(true); }} className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium">
+          <button onClick={() => { setFormData(emptyForm()); setIsEditing(true); }} className="px-4 py-2 bg-brand text-white rounded-xl text-sm font-medium">
             Add New
           </button>
         )}
       </div>
 
       {isEditing && (
-        <form onSubmit={handleSubmit} className="bg-kraft/5 p-6 rounded-2xl border border-border mb-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-kraft/5 p-6 rounded-2xl border border-gray-200 mb-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {fields.map(f => {
               if (f.type === 'image') {
@@ -102,8 +103,8 @@ const CrudSection = ({ title, endpoint, fields, token, refreshKey }) => {
               if (f.type === 'textarea') {
                 return (
                   <div key={f.name} className={f.fullWidth ? 'col-span-full' : ''}>
-                    <label className="block text-sm font-bold text-neutral/70 mb-1">{f.label}</label>
-                    <textarea value={formData[f.name] || ''} onChange={e => setFormData({ ...formData, [f.name]: e.target.value })} rows={3} className="w-full border border-border rounded-xl px-3 py-2 text-sm bg-base" />
+                    <label className="block text-sm font-bold text-gray-500 mb-1">{f.label}</label>
+                    <textarea value={formData[f.name] || ''} onChange={e => setFormData({ ...formData, [f.name]: e.target.value })} rows={3} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm bg-gray-50" />
                   </div>
                 );
               }
@@ -111,28 +112,28 @@ const CrudSection = ({ title, endpoint, fields, token, refreshKey }) => {
                 return (
                   <div key={f.name} className="flex items-center gap-2">
                     <input type="checkbox" checked={!!formData[f.name]} onChange={e => setFormData({ ...formData, [f.name]: e.target.checked })} className="w-4 h-4" />
-                    <label className="text-sm font-bold text-neutral/70">{f.label}</label>
+                    <label className="text-sm font-bold text-gray-500">{f.label}</label>
                   </div>
                 );
               }
               return (
                 <div key={f.name}>
-                  <label className="block text-sm font-bold text-neutral/70 mb-1">{f.label}</label>
-                  <input type={f.type || 'text'} value={formData[f.name] || ''} onChange={e => setFormData({ ...formData, [f.name]: e.target.value })} className="w-full border border-border rounded-xl px-3 py-2 text-sm bg-base" required={f.required} />
+                  <label className="block text-sm font-bold text-gray-500 mb-1">{f.label}</label>
+                  <input type={f.type || 'text'} value={formData[f.name] || ''} onChange={e => setFormData({ ...formData, [f.name]: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm bg-gray-50" required={f.required} />
                 </div>
               );
             })}
           </div>
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => { setIsEditing(false); setFormData(emptyForm()); }} className="px-4 py-2 border border-border rounded-xl text-sm">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-primary text-white rounded-xl text-sm">Save</button>
+            <button type="button" onClick={() => { setIsEditing(false); setFormData(emptyForm()); }} className="px-4 py-2 border border-gray-200 rounded-xl text-sm">Cancel</button>
+            <button type="submit" className="px-4 py-2 bg-brand text-white rounded-xl text-sm">Save</button>
           </div>
         </form>
       )}
 
-      <div className="bg-surface border border-border rounded-2xl overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
         <table className="w-full text-left text-sm">
-          <thead className="bg-kraft/10 border-b border-border">
+          <thead className="bg-kraft/10 border-b border-gray-200">
             <tr>
               {fields.filter(f => !f.hideInTable).map(f => (
                 <th key={f.name} className="px-4 py-3 font-bold">{f.label}</th>
@@ -152,13 +153,13 @@ const CrudSection = ({ title, endpoint, fields, token, refreshKey }) => {
                   </td>
                 ))}
                 <td className="px-4 py-3 text-right">
-                  <button onClick={() => { setFormData(item); setIsEditing(true); }} className="text-primary hover:underline mr-3">Edit</button>
+                  <button onClick={() => { setFormData(item); setIsEditing(true); }} className="text-brand hover:underline mr-3">Edit</button>
                   <button onClick={() => handleDelete(item.id)} className="text-red-500 hover:underline">Delete</button>
                 </td>
               </tr>
             ))}
             {items.length === 0 && (
-              <tr><td colSpan={99} className="px-4 py-6 text-center text-neutral/50">No items yet</td></tr>
+              <tr><td colSpan={99} className="px-4 py-6 text-center text-gray-500">No items yet</td></tr>
             )}
           </tbody>
         </table>
@@ -169,25 +170,12 @@ const CrudSection = ({ title, endpoint, fields, token, refreshKey }) => {
 
 // ─── Drag & Drop Image Zone ─────────────────────────────
 const ImageDropZone = ({ label, value, onUpload, onClear }) => {
-  const [dragging, setDragging] = useState(false);
-  const fileRef = useRef(null);
-
-  const handleDrop = useCallback((e) => {
-    e.preventDefault();
-    setDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) onUpload(file);
-  }, [onUpload]);
-
-  const handleDragOver = useCallback((e) => { e.preventDefault(); setDragging(true); }, []);
-  const handleDragLeave = useCallback(() => setDragging(false), []);
-
   if (value) {
     return (
       <div className="col-span-full">
-        <label className="block text-sm font-bold text-neutral/70 mb-1">{label}</label>
+        <label className="block text-sm font-bold text-gray-500 mb-1">{label}</label>
         <div className="relative inline-block">
-          <img src={value} alt="" className="h-24 rounded-xl object-cover border border-border" />
+          <img src={value} alt="" className="h-24 rounded-xl object-cover border border-gray-200" />
           <button
             type="button"
             onClick={onClear}
@@ -200,23 +188,15 @@ const ImageDropZone = ({ label, value, onUpload, onClear }) => {
 
   return (
     <div className="col-span-full">
-      <label className="block text-sm font-bold text-neutral/70 mb-1">{label}</label>
-      <div
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onClick={() => fileRef.current?.click()}
-        className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
-          dragging
-            ? 'border-primary bg-primary/5 scale-[1.01]'
-            : 'border-border hover:border-primary/50 hover:bg-kraft/5'
-        }`}
+      <label className="block text-sm font-bold text-gray-500 mb-1">{label}</label>
+      <AdminImageDropzone
+        onDrop={(e) => { if (e.target.files[0]) onUpload(e.target.files[0]); }}
+        className="p-8 text-center"
       >
-        <Upload className="w-8 h-8 mx-auto mb-2 text-neutral/30" />
-        <p className="text-sm text-neutral/50 font-medium">Drag & drop an image here, or click to browse</p>
-        <p className="text-xs text-neutral/30 mt-1">PNG, JPG, WebP up to 5MB</p>
-      </div>
-      <input type="file" ref={fileRef} className="hidden" accept="image/*" onChange={(e) => { if (e.target.files[0]) onUpload(e.target.files[0]); }} />
+        <Upload className="w-8 h-8 mx-auto mb-2 text-gray-500" />
+        <p className="text-sm text-gray-500 font-medium">Drag & drop an image here, or click to browse</p>
+        <p className="text-xs text-gray-500 mt-1">PNG, JPG, WebP up to 5MB</p>
+      </AdminImageDropzone>
     </div>
   );
 };
@@ -267,25 +247,25 @@ const ContentTab = ({ token }) => {
 
   const Input = ({ label, value, onChange, placeholder }) => (
     <div>
-      <label className="block text-sm font-bold text-neutral/70 mb-1">{label}</label>
-      <input type="text" value={value || ''} onChange={e => onChange(e.target.value)} placeholder={placeholder} className="w-full border border-border rounded-xl px-4 py-2.5 text-sm bg-base focus:outline-none focus:border-primary" />
+      <label className="block text-sm font-bold text-gray-500 mb-1">{label}</label>
+      <input type="text" value={value || ''} onChange={e => onChange(e.target.value)} placeholder={placeholder} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-gray-50 focus:outline-none focus:border-clay" />
     </div>
   );
 
   const TextArea = ({ label, value, onChange, placeholder, rows = 3 }) => (
     <div>
-      <label className="block text-sm font-bold text-neutral/70 mb-1">{label}</label>
-      <textarea value={value || ''} onChange={e => onChange(e.target.value)} placeholder={placeholder} rows={rows} className="w-full border border-border rounded-xl px-4 py-2.5 text-sm bg-base focus:outline-none focus:border-primary" />
+      <label className="block text-sm font-bold text-gray-500 mb-1">{label}</label>
+      <textarea value={value || ''} onChange={e => onChange(e.target.value)} placeholder={placeholder} rows={rows} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-gray-50 focus:outline-none focus:border-clay" />
     </div>
   );
 
   return (
     <div className="space-y-10">
       {/* ── Hero Section ── */}
-      <div className="bg-surface p-6 rounded-2xl border border-border">
+      <div className="bg-white p-6 rounded-2xl border border-gray-200">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-bold">Hero Banner (Section 1)</h3>
-          <button onClick={() => handleSave('about_hero', hero)} disabled={saving} className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium disabled:opacity-50">
+          <button onClick={() => handleSave('about_hero', hero)} disabled={saving} className="px-4 py-2 bg-brand text-white rounded-xl text-sm font-medium disabled:opacity-50">
             {saving ? 'Saving…' : 'Save Hero'}
           </button>
         </div>
@@ -302,10 +282,10 @@ const ContentTab = ({ token }) => {
       </div>
 
       {/* ── Mission Section ── */}
-      <div className="bg-surface p-6 rounded-2xl border border-border">
+      <div className="bg-white p-6 rounded-2xl border border-gray-200">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-bold">Mission Statement (Section 2)</h3>
-          <button onClick={() => handleSave('about_mission', mission)} disabled={saving} className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium disabled:opacity-50">
+          <button onClick={() => handleSave('about_mission', mission)} disabled={saving} className="px-4 py-2 bg-brand text-white rounded-xl text-sm font-medium disabled:opacity-50">
             {saving ? 'Saving…' : 'Save Mission'}
           </button>
         </div>
@@ -320,19 +300,19 @@ const ContentTab = ({ token }) => {
       </div>
 
       {/* ── Closing CTA Section ── */}
-      <div className="bg-surface p-6 rounded-2xl border border-border">
+      <div className="bg-white p-6 rounded-2xl border border-gray-200">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-bold">Closing CTA Banner (Section 8)</h3>
-          <button onClick={() => handleSave('about_cta', cta)} disabled={saving} className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium disabled:opacity-50">
+          <button onClick={() => handleSave('about_cta', cta)} disabled={saving} className="px-4 py-2 bg-brand text-white rounded-xl text-sm font-medium disabled:opacity-50">
             {saving ? 'Saving…' : 'Save CTA'}
           </button>
         </div>
         <div className="space-y-4">
-          <Input label="Headline" value={cta.headline} onChange={v => setCta({ ...cta, headline: v })} placeholder="e.g. Upload your design — we print it" />
+          <Input label="Headline" value={cta.headline} onChange={v => setCta({ ...cta, headline: v })} placeholder="e.g. Doesn't come up with anything? Contact us" />
           <TextArea label="Supporting Text (optional)" value={cta.body} onChange={v => setCta({ ...cta, body: v })} placeholder="Optional short description…" rows={2} />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input label="Button Text" value={cta.cta_text} onChange={v => setCta({ ...cta, cta_text: v })} placeholder="e.g. Browse Products" />
-            <Input label="Button Link" value={cta.cta_link} onChange={v => setCta({ ...cta, cta_link: v })} placeholder="e.g. /products" />
+            <Input label="Button Text" value={cta.cta_text} onChange={v => setCta({ ...cta, cta_text: v })} placeholder="e.g. Contact Us" />
+            <Input label="Button Link" value={cta.cta_link} onChange={v => setCta({ ...cta, cta_link: v })} placeholder="e.g. /contact" />
           </div>
         </div>
       </div>
@@ -347,17 +327,17 @@ const AdminAboutPage = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-black font-display text-neutral mb-8">About Page</h1>
+      <h1 className="text-3xl font-semibold font-display text-gray-900 mb-8">About Page</h1>
 
-      <div className="flex border-b border-border mb-8 overflow-x-auto">
+      <div className="flex border-b border-gray-200 mb-8 overflow-x-auto">
         {TABS.map(tab => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`px-5 py-3 font-bold text-sm whitespace-nowrap border-b-2 transition-colors ${
               activeTab === tab.key
-                ? 'border-primary text-primary'
-                : 'border-transparent text-neutral/50 hover:text-neutral'
+                ? 'border-clay text-brand'
+                : 'border-transparent text-gray-500 hover:text-gray-900'
             }`}
           >
             {tab.label}

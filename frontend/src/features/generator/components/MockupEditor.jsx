@@ -6,7 +6,7 @@ import { getImageUrl } from '../../../shared/utils/getImageUrl';
 import { useAuth } from '../../../shared/store/useAuth';
 import InteractiveMockupPreview from './InteractiveMockupPreview';
 
-export default function MockupEditor({ template, onClose }) {
+export default function MockupEditor({ template, productId, onClose }) {
   const { showToast } = useToast();
   const { isAuthenticated } = useAuth();
   
@@ -201,6 +201,10 @@ export default function MockupEditor({ template, onClose }) {
       formData.append('department', 'bulk'); // Using bulk/custom department
       formData.append('attachment', blob, `design-${template.name.replace(/\s+/g, '-').toLowerCase()}.png`);
       
+      if (productId) {
+        formData.append('items', JSON.stringify([{ product_id: productId, quantity: 1, notes: 'Requested from Mockup Editor' }]));
+      }
+      
       const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/inquiries`, {
         method: 'POST',
         headers: {
@@ -211,7 +215,6 @@ export default function MockupEditor({ template, onClose }) {
 
       if (!res.ok) throw new Error('Failed to submit quote');
 
-      alert('mail is send');
       showToast('Quote requested successfully! We will email you shortly.', 'success');
       setIsQuoteModalOpen(false);
       setQuoteForm({ name: '', email: '', phone: '', company: '', message: '' });
@@ -235,21 +238,21 @@ export default function MockupEditor({ template, onClose }) {
         onClick={onClose}
         className="flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-8 font-medium transition-colors"
       >
-        <ArrowLeft size={20} /> Back
+        <ArrowLeft size={20} /> Back to Templates
       </button>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
         {/* Left Column: Controls */}
-        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col">
-          <h2 className="text-2xl font-bold mb-2">{template.name}</h2>
-          <p className="text-gray-500 mb-6">Customize your design placement</p>
+        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 flex flex-col">
+          <h2 className="text-2xl font-bold font-display tracking-tight text-gray-900 mb-2">{template.name}</h2>
+          <p className="text-gray-500 mb-6 text-sm">Customize your design placement</p>
 
-          <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+          <div className="flex gap-2 mb-8 overflow-x-auto pb-2 no-scrollbar">
             {faces.map((face, idx) => (
               <button
                 key={face.id}
                 onClick={() => setActiveFaceIndex(idx)}
-                className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-bold transition-colors ${idx === activeFaceIndex ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                className={`whitespace-nowrap px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors ${idx === activeFaceIndex ? 'bg-brand text-white shadow-sm' : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'}`}
               >
                 {face.name}
               </button>
@@ -260,13 +263,13 @@ export default function MockupEditor({ template, onClose }) {
             <div className="mb-8 flex-1">
               <button 
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full h-full min-h-[200px] border-2 border-dashed border-gray-300 hover:border-blue-500 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 transition-colors group text-center"
+                className="w-full h-full min-h-[240px] border-2 border-dashed border-gray-200 hover:border-brand bg-gray-50 hover:bg-brand-subtle rounded-xl p-8 flex flex-col items-center justify-center gap-4 transition-colors group text-center"
               >
-                <div className="bg-blue-50 text-blue-600 p-4 rounded-full group-hover:scale-110 transition-transform">
+                <div className="bg-white text-gray-400 group-hover:text-brand border border-gray-200 group-hover:border-brand/30 p-4 rounded-full group-hover:scale-110 shadow-xs transition-all">
                   <Upload size={24} />
                 </div>
                 <div>
-                  <p className="font-bold text-gray-900">Upload design for {activeFace.name}</p>
+                  <p className="font-semibold text-gray-900">Upload design for {activeFace.name}</p>
                   <p className="text-sm text-gray-500 mt-1">PNG or JPG, up to 10MB</p>
                 </div>
               </button>
@@ -274,106 +277,110 @@ export default function MockupEditor({ template, onClose }) {
             </div>
           ) : (
             <div className="space-y-6 flex-1">
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">Design loaded for {activeFace.name}</span>
+              <div className="flex justify-between items-center mb-6">
+                <span className="text-xs font-semibold text-success bg-success-bg border border-green-200 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-success"></span>
+                  Design loaded
+                </span>
                 <div className="flex gap-3">
                   <button 
                     onClick={() => fileInputRef.current?.click()}
-                    className="text-sm text-blue-600 hover:underline"
+                    className="text-sm text-brand hover:underline font-medium"
                   >
-                    Change design
+                    Change
                   </button>
                   <button 
                     onClick={() => updateFaceData(activeFace.id, { designFile: null, designDataUrl: null, previewUrl: null, transform: { x: 0, y: 0, scale: 1, rotation: 0 } })}
-                    className="text-sm text-red-600 hover:underline"
+                    className="text-sm text-danger hover:underline font-medium"
                   >
-                    Remove design
+                    Remove
                   </button>
                 </div>
               </div>
               <input type="file" ref={fileInputRef} onChange={handleDesignUpload} className="hidden" accept="image/*" />
 
-              <div>
-                <label className="flex justify-between text-sm font-bold text-gray-700 mb-2">
-                  <span>Scale</span>
-                  <span className="text-gray-500">{tf.scale.toFixed(2)}x</span>
-                </label>
-                <input 
-                  type="range" 
-                  min={c.minScale} max={c.maxScale} step="0.01" 
-                  value={tf.scale}
-                  onChange={(e) => updateFaceData(activeFace.id, { transform: { ...tf, scale: parseFloat(e.target.value) } })}
-                  className="w-full accent-blue-600"
-                />
-              </div>
-              
-              <div>
-                <label className="flex justify-between text-sm font-bold text-gray-700 mb-2">
-                  <span>Rotation</span>
-                  <span className="text-gray-500">{tf.rotation}°</span>
-                </label>
-                <input 
-                  type="range" 
-                  min={c.minRotation} max={c.maxRotation} step="1" 
-                  value={tf.rotation}
-                  onChange={(e) => updateFaceData(activeFace.id, { transform: { ...tf, rotation: parseFloat(e.target.value) } })}
-                  className="w-full accent-blue-600"
-                />
-              </div>
+              <div className="space-y-6">
+                <div>
+                  <label className="flex justify-between text-sm font-semibold text-gray-700 mb-3">
+                    <span>Scale</span>
+                    <span className="text-gray-500 font-mono">{tf.scale.toFixed(2)}x</span>
+                  </label>
+                  <input 
+                    type="range" 
+                    min={c.minScale} max={c.maxScale} step="0.01" 
+                    value={tf.scale}
+                    onChange={(e) => updateFaceData(activeFace.id, { transform: { ...tf, scale: parseFloat(e.target.value) } })}
+                    className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand"
+                  />
+                </div>
+                
+                <div>
+                  <label className="flex justify-between text-sm font-semibold text-gray-700 mb-3">
+                    <span>Rotation</span>
+                    <span className="text-gray-500 font-mono">{tf.rotation}°</span>
+                  </label>
+                  <input 
+                    type="range" 
+                    min={c.minRotation} max={c.maxRotation} step="1" 
+                    value={tf.rotation}
+                    onChange={(e) => updateFaceData(activeFace.id, { transform: { ...tf, rotation: parseFloat(e.target.value) } })}
+                    className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand"
+                  />
+                </div>
 
-              <div>
-                <label className="flex justify-between text-sm font-bold text-gray-700 mb-2">
-                  <span>Position X</span>
-                  <span className="text-gray-500">{(tf.x * 100).toFixed(0)}%</span>
-                </label>
-                <input 
-                  type="range" 
-                  min="-0.5" max="0.5" step="0.01" 
-                  value={tf.x}
-                  onChange={(e) => updateFaceData(activeFace.id, { transform: { ...tf, x: parseFloat(e.target.value) } })}
-                  className="w-full accent-blue-600"
-                />
-              </div>
+                <div>
+                  <label className="flex justify-between text-sm font-semibold text-gray-700 mb-3">
+                    <span>Position X</span>
+                    <span className="text-gray-500 font-mono">{(tf.x * 100).toFixed(0)}%</span>
+                  </label>
+                  <input 
+                    type="range" 
+                    min="-0.5" max="0.5" step="0.01" 
+                    value={tf.x}
+                    onChange={(e) => updateFaceData(activeFace.id, { transform: { ...tf, x: parseFloat(e.target.value) } })}
+                    className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand"
+                  />
+                </div>
 
-              <div>
-                <label className="flex justify-between text-sm font-bold text-gray-700 mb-2">
-                  <span>Position Y</span>
-                  <span className="text-gray-500">{(tf.y * 100).toFixed(0)}%</span>
-                </label>
-                <input 
-                  type="range" 
-                  min="-0.5" max="0.5" step="0.01" 
-                  value={tf.y}
-                  onChange={(e) => updateFaceData(activeFace.id, { transform: { ...tf, y: parseFloat(e.target.value) } })}
-                  className="w-full accent-blue-600"
-                />
+                <div>
+                  <label className="flex justify-between text-sm font-semibold text-gray-700 mb-3">
+                    <span>Position Y</span>
+                    <span className="text-gray-500 font-mono">{(tf.y * 100).toFixed(0)}%</span>
+                  </label>
+                  <input 
+                    type="range" 
+                    min="-0.5" max="0.5" step="0.01" 
+                    value={tf.y}
+                    onChange={(e) => updateFaceData(activeFace.id, { transform: { ...tf, y: parseFloat(e.target.value) } })}
+                    className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand"
+                  />
+                </div>
               </div>
             </div>
           )}
 
-          <div className="pt-6 border-t border-gray-100 mt-auto flex flex-col gap-3">
+          <div className="pt-8 border-t border-gray-100 mt-auto flex flex-col gap-3">
             <button 
               onClick={handleExport}
               disabled={isRendering || isSubmittingQuote}
-              className="w-full bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-4 rounded-2xl shadow-sm transition-all flex justify-center items-center gap-2 disabled:opacity-70"
+              className="w-full bg-white border border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50 hover:shadow-xs font-semibold py-3.5 rounded-xl transition-all flex justify-center items-center gap-2 disabled:opacity-70 text-sm"
             >
-              {isRendering ? <Loader2 className="animate-spin" size={20} /> : <Download size={20} />}
+              {isRendering ? <Loader2 className="animate-spin text-gray-400" size={18} /> : <Download size={18} className="text-gray-500" />}
               {isRendering ? 'Rendering Gallery...' : 'Export Gallery'}
             </button>
 
             <button 
               onClick={() => {
                 if (!faces.some(f => faceData[f.id].designDataUrl)) {
-                  alert('Please upload a design to at least one face first.');
                   showToast('Please upload a design to at least one face first.', 'warning');
                   return;
                 }
                 setIsQuoteModalOpen(true);
               }}
               disabled={isRendering || isSubmittingQuote}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-md transition-all flex justify-center items-center gap-2 disabled:opacity-70"
+              className="w-full bg-brand hover:bg-brand-hover text-white font-semibold py-3.5 rounded-xl shadow-sm hover:shadow-md transition-all flex justify-center items-center gap-2 disabled:opacity-70 text-sm"
             >
-              <Send size={20} /> Request Quote with Design
+              <Send size={18} /> Request Quote with Design
             </button>
           </div>
         </div>
@@ -384,7 +391,7 @@ export default function MockupEditor({ template, onClose }) {
             <div className="flex justify-end shrink-0">
               <button
                 onClick={() => setIsSideBySide(!isSideBySide)}
-                className="text-sm font-semibold bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm hover:bg-gray-50 transition-colors"
+                className="text-sm font-semibold bg-white border border-gray-200 px-4 py-2.5 rounded-lg shadow-sm hover:bg-gray-50 transition-colors text-gray-700"
               >
                 {isSideBySide ? 'Single Face View' : 'Side-by-Side View'}
               </button>
@@ -392,12 +399,12 @@ export default function MockupEditor({ template, onClose }) {
           )}
 
           {isSideBySide ? (
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 w-full overflow-y-auto content-start bg-gray-100 p-6 rounded-3xl border border-gray-200 min-h-[500px]">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 w-full overflow-y-auto content-start bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-200 min-h-[500px]">
               {faces.map((face, idx) => {
                 const data = faceData[face.id];
                 return (
-                  <div key={face.id} className="relative flex flex-col items-center bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-                    <h3 className="font-bold text-gray-700 mb-4">{face.name}</h3>
+                  <div key={face.id} className="relative flex flex-col items-center bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <h3 className="font-semibold text-gray-900 mb-4">{face.name}</h3>
                     <div className="w-full relative flex-1 flex items-center justify-center min-h-[250px]">
                       <InteractiveMockupPreview
                         face={face}
@@ -409,7 +416,7 @@ export default function MockupEditor({ template, onClose }) {
                     </div>
                     <button 
                       onClick={() => { setActiveFaceIndex(idx); setIsSideBySide(false); }}
-                      className="mt-6 text-sm text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium transition-colors"
+                      className="mt-6 text-sm text-brand font-semibold hover:bg-brand-subtle px-4 py-2 rounded-lg transition-colors"
                     >
                       Edit {face.name}
                     </button>
@@ -419,7 +426,7 @@ export default function MockupEditor({ template, onClose }) {
             </div>
           ) : (
             <>
-              <div className="bg-gray-100 rounded-3xl overflow-hidden flex items-center justify-center min-h-[500px] border border-gray-200">
+              <div className="bg-gray-50 rounded-2xl overflow-hidden flex items-center justify-center min-h-[500px] border border-gray-200">
                 <InteractiveMockupPreview
                   face={activeFace}
                   designDataUrl={activeData.designDataUrl}
@@ -431,7 +438,7 @@ export default function MockupEditor({ template, onClose }) {
               
               {/* Thumbnails of all faces */}
               {faces.length > 1 && (
-                <div className="flex gap-4 overflow-x-auto pb-4 justify-center mt-4">
+                <div className="flex gap-4 overflow-x-auto pb-4 justify-center mt-4 no-scrollbar">
                   {faces.map((face, idx) => {
                     const data = faceData[face.id];
                     const isSelected = idx === activeFaceIndex;
@@ -439,7 +446,7 @@ export default function MockupEditor({ template, onClose }) {
                       <div 
                         key={face.id}
                         onClick={() => setActiveFaceIndex(idx)}
-                        className={`w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden cursor-pointer border-2 transition-colors bg-white ${isSelected ? 'border-blue-600' : 'border-gray-200 hover:border-blue-300'}`}
+                        className={`w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden cursor-pointer border-2 transition-colors bg-white ${isSelected ? 'border-brand' : 'border-gray-200 hover:border-gray-300 opacity-60 hover:opacity-100'}`}
                       >
                         <img 
                           src={data?.previewUrl || getImageUrl(face.baseImageUrl)} 
@@ -458,39 +465,39 @@ export default function MockupEditor({ template, onClose }) {
 
       {/* Quote Form Modal */}
       {isQuoteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
-            <div className="flex justify-between items-center p-6 border-b border-gray-100">
-              <h2 className="text-2xl font-bold font-display text-gray-900">Request a Quote</h2>
-              <button onClick={() => setIsQuoteModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full hover:bg-gray-100">
-                <X size={24} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 border border-gray-100">
+            <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50">
+              <h2 className="text-xl font-bold font-display text-gray-900 tracking-tight">Request a Quote</h2>
+              <button onClick={() => setIsQuoteModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-lg hover:bg-gray-200">
+                <X size={20} />
               </button>
             </div>
             
-            <form onSubmit={submitQuote} className="p-6 space-y-4">
-              <p className="text-gray-500 text-sm mb-6">
+            <form onSubmit={submitQuote} className="p-6 space-y-5">
+              <p className="text-gray-500 text-sm mb-6 leading-relaxed">
                 Fill out the details below. We'll attach your custom mockup design automatically so our team can provide an accurate quote.
               </p>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                  <input type="text" required placeholder="Full Name" value={quoteForm.name} onChange={e => setQuoteForm({...quoteForm, name: e.target.value})} className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all outline-none" />
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  <input type="text" required placeholder="Full Name" value={quoteForm.name} onChange={e => setQuoteForm({...quoteForm, name: e.target.value})} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none text-sm" />
                 </div>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                  <input type="email" required placeholder="Email Address" value={quoteForm.email} onChange={e => setQuoteForm({...quoteForm, email: e.target.value})} className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all outline-none" />
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  <input type="email" required placeholder="Email Address" value={quoteForm.email} onChange={e => setQuoteForm({...quoteForm, email: e.target.value})} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none text-sm" />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                  <input type="tel" placeholder="Phone Number" value={quoteForm.phone} onChange={e => setQuoteForm({...quoteForm, phone: e.target.value})} className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all outline-none" />
+                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  <input type="tel" placeholder="Phone Number" value={quoteForm.phone} onChange={e => setQuoteForm({...quoteForm, phone: e.target.value})} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none text-sm" />
                 </div>
                 <div className="relative">
-                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                  <input type="text" placeholder="Company" value={quoteForm.company} onChange={e => setQuoteForm({...quoteForm, company: e.target.value})} className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all outline-none" />
+                  <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  <input type="text" placeholder="Company" value={quoteForm.company} onChange={e => setQuoteForm({...quoteForm, company: e.target.value})} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none text-sm" />
                 </div>
               </div>
 
@@ -499,16 +506,18 @@ export default function MockupEditor({ template, onClose }) {
                 rows={4}
                 value={quoteForm.message}
                 onChange={e => setQuoteForm({...quoteForm, message: e.target.value})}
-                className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all outline-none resize-none"
+                className="w-full p-4 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none resize-none text-sm"
               />
 
               <button 
                 type="submit" 
                 disabled={isSubmittingQuote}
-                className="w-full mt-4 bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-md flex items-center justify-center gap-2 disabled:opacity-70"
+                className="w-full pt-2 pb-1"
               >
-                {isSubmittingQuote ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
-                {isSubmittingQuote ? 'Sending Quote Request...' : 'Send Quote Request'}
+                <div className="w-full bg-brand text-white py-3.5 rounded-lg font-semibold hover:bg-brand-hover transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-70 text-sm">
+                  {isSubmittingQuote ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
+                  {isSubmittingQuote ? 'Sending Quote Request...' : 'Send Quote Request'}
+                </div>
               </button>
             </form>
           </div>

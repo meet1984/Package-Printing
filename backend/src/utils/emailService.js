@@ -17,7 +17,7 @@ const sendMail = async ({ to, subject, html, attachments }) => {
     return;
   }
 
-  const fromName = process.env.SMTP_FROM_NAME || 'P&P Packaging';
+  const fromName = process.env.SMTP_FROM_NAME || 'Zeprr Packaging';
   const fromEmail = process.env.FROM_EMAIL || process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER;
 
   await transporter.sendMail({

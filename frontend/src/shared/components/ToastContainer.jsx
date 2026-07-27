@@ -1,15 +1,17 @@
 import React from 'react';
-import { CheckCircle2, XCircle, X } from 'lucide-react';
+import { CheckCircle2, XCircle, X, Info } from 'lucide-react';
 import { useToast } from '../store/useToast';
 
 const ICONS = {
   success: CheckCircle2,
   error: XCircle,
+  info: Info,
 };
 
 const STYLES = {
-  success: 'bg-green-50 border-green-200 text-green-800',
-  error: 'bg-red-50 border-red-200 text-red-700',
+  success: 'bg-success-bg border-green-200 text-green-800',
+  error: 'bg-danger-bg border-red-200 text-red-700',
+  info: 'bg-blue-50 border-blue-200 text-blue-700',
 };
 
 const ToastContainer = () => {
@@ -29,7 +31,11 @@ const ToastContainer = () => {
           <div
             key={toast.id}
             role={toast.type === 'error' ? 'alert' : 'status'}
-            className={`flex items-start gap-3 border rounded-xl shadow-lg p-4 animate-in slide-in-from-bottom-4 fade-in duration-300 ${STYLES[toast.type] || STYLES.success}`}
+            className={`
+              flex items-start gap-3 border rounded-md shadow-lg p-4
+              animate-in slide-in-from-bottom-4 fade-in duration-300
+              ${STYLES[toast.type] || STYLES.success}
+            `}
           >
             <Icon className="h-5 w-5 shrink-0 mt-0.5" />
             <p className="text-sm font-medium flex-1">{toast.message}</p>
