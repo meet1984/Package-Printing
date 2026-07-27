@@ -18,10 +18,11 @@ jobs:
           node-version: '20.20.2'
 
       - name: Install backend dependencies
+        working-directory: ./backend
         run: npm install
 
       - name: Install & build frontend
-        working-directory: ./client
+        working-directory: ./frontend
         run: |
           npm install
           npm run build
@@ -42,7 +43,8 @@ jobs:
             -e "ssh -p ${{ secrets.SSH_PORT }}" \
             --exclude='.git' \
             --exclude='.github' \
-            --exclude='client/node_modules' \
+            --exclude='frontend/node_modules' \
+            --exclude='backend/node_modules' \
             --exclude='node_modules' \
             ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.APP_PATH }}/
 
