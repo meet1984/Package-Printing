@@ -42,12 +42,11 @@ jobs:
           tar --exclude='.git' --exclude='.github' \
               --exclude='frontend/node_modules' --exclude='backend/node_modules' \
               --exclude='node_modules' \
-              --exclude='deploy.tar.gz' \
-              -czf deploy.tar.gz .
+              -czf /tmp/deploy.tar.gz .
 
       - name: Copy archive to server
         run: |
-          scp -P ${{ secrets.SSH_PORT }} deploy.tar.gz \
+          scp -P ${{ secrets.SSH_PORT }} /tmp/deploy.tar.gz \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.APP_PATH }}/deploy.tar.gz
 
       - name: Extract on server, install deps & restart app
