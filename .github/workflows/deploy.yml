@@ -43,7 +43,7 @@ jobs:
           mkdir -p deploy_staging/frontend
           cp -r backend/. deploy_staging/
           rm -rf deploy_staging/node_modules
-          cp -r frontend/build deploy_staging/frontend/build
+          cp -r frontend/dist deploy_staging/frontend/dist
           tar --exclude='.env' -czf /tmp/deploy.tar.gz -C deploy_staging .
 
       - name: Copy archive to server
