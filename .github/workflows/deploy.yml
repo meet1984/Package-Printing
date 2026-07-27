@@ -37,21 +37,25 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy files via rsync
+      - name: Package build for deploy
         run: |
-          rsync -avz --delete \
-            -e "ssh -p ${{ secrets.SSH_PORT }}" \
-            --exclude='.git' \
-            --exclude='.github' \
-            --exclude='frontend/node_modules' \
-            --exclude='backend/node_modules' \
-            --exclude='node_modules' \
-            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.APP_PATH }}/
+          tar --exclude='.git' --exclude='.github' \
+              --exclude='frontend/node_modules' --exclude='backend/node_modules' \
+              --exclude='node_modules' \
+              -czf deploy.tar.gz .
 
-      - name: Install production deps & restart app
+      - name: Copy archive to server
         run: |
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-          "source /home/${{ secrets.SSH_USER }}/nodevenv/nodeapp/18/bin/activate && \
-           cd ${{ secrets.APP_PATH }} && \
-           npm install --production && \
-           mkdir -p tmp && touch tmp/restart.txt"
+          scp -P ${{ secrets.SSH_PORT }} deploy.tar.gz \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.APP_PATH }}/deploy.tar.gz
+
+      - name: Extract on server, install deps & restart app
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            cd ${{ secrets.APP_PATH }} &&
+            tar -xzf deploy.tar.gz &&
+            rm deploy.tar.gz &&
+            source /home/${{ secrets.SSH_USER }}/nodevenv/nodeapp/18/bin/activate &&
+            cd backend && npm install --production &&
+            cd .. && mkdir -p tmp && touch tmp/restart.txt
+          "
