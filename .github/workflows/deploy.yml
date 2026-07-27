@@ -21,12 +21,6 @@ jobs:
         working-directory: ./backend
         run: npm ci || npm install
 
-      - name: Install & build frontend
-        working-directory: ./frontend
-        run: |
-          npm ci || npm install
-          npm run build
-
       - name: Install SSH key
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -37,13 +31,13 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Prepare deploy package (flatten backend to root, nest frontend build)
+      - name: Prepare deploy package (backend only)
         run: |
           rm -rf deploy_staging
-          mkdir -p deploy_staging/frontend
+          mkdir -p deploy_staging
           cp -r backend/. deploy_staging/
           rm -rf deploy_staging/node_modules
-          cp -r frontend/dist deploy_staging/frontend/dist
+          rm -rf deploy_staging/uploads
           tar --exclude='.env' -czf /tmp/deploy.tar.gz -C deploy_staging .
 
       - name: Copy archive to server
