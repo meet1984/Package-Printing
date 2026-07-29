@@ -20,6 +20,10 @@ export const useAuth = create((set, get) => ({
         return { requireOTP: true };
       }
 
+      if (response.data.user?.role === 'admin') {
+        sessionStorage.setItem('admin_session_active', 'true');
+      }
+
       set({ 
         user: response.data.user, 
         isAuthenticated: true, 
@@ -40,10 +44,27 @@ export const useAuth = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const response = await axios.get(`${API_URL}/users/me`);
+      const user = response.data.user;
+
+      if (user && user.role === 'admin' && !sessionStorage.getItem('admin_session_active')) {
+        try {
+          await axios.post(`${API_URL}/users/logout`);
+        } catch (e) {
+          console.error('Logout on expired admin session error', e);
+        }
+        set({ 
+          user: null, 
+          isAuthenticated: false, 
+          token: null,
+          loading: false 
+        });
+        return;
+      }
+
       set({ 
-        user: response.data.user, 
-        isAuthenticated: !!response.data.user, 
-        token: !!response.data.user,
+        user: user, 
+        isAuthenticated: !!user, 
+        token: !!user,
         loading: false 
       });
     } catch (err) {
@@ -57,6 +78,7 @@ export const useAuth = create((set, get) => ({
     } catch (error) {
       console.error('Logout error', error);
     }
+    sessionStorage.removeItem('admin_session_active');
     set({ user: null, isAuthenticated: false, token: null });
   }
 }));

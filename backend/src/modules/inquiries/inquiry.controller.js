@@ -2,6 +2,7 @@ const Inquiry = require('./inquiry.model');
 const InquiryItem = require('./inquiryItem.model');
 const Product = require('../products/product.model');
 const PageContent = require('../content/pageContent.model');
+const User = require('../users/user.model');
 const sequelize = require('../../config/db');
 const { sendMail } = require('../../utils/emailService');
 const { generateQuoteConfirmationEmail, generateAdminInquiryEmail } = require('../../utils/emailTemplates');
@@ -100,8 +101,22 @@ exports.createInquiry = async (req, res, next) => {
     // Commit transaction
     await t.commit();
 
-    // Send email to Admin
-    const adminEmail = process.env.ADMIN_EMAIL;
+    // Send email to all Admin users
+    let adminEmails = [];
+    try {
+      const adminUsers = await User.findAll({
+        where: { role: 'admin' },
+        attributes: ['email']
+      });
+      adminEmails = adminUsers.map(u => u.email).filter(Boolean);
+    } catch (dbErr) {
+      console.error('Failed to fetch admin users for inquiry notification:', dbErr);
+    }
+
+    if (process.env.ADMIN_EMAIL && !adminEmails.includes(process.env.ADMIN_EMAIL)) {
+      adminEmails.push(process.env.ADMIN_EMAIL);
+    }
+
     const apiUrl = process.env.VITE_API_URL ? process.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000';
     
     let attachments = [];
@@ -126,7 +141,7 @@ exports.createInquiry = async (req, res, next) => {
       `;
     }
 
-    if (adminEmail) {
+    if (adminEmails.length > 0) {
       const safeName = escapeHtml(name);
       const safeEmail = escapeHtml(email);
       const safePhone = escapeHtml(phone) || 'N/A';
@@ -134,25 +149,31 @@ exports.createInquiry = async (req, res, next) => {
       const safeMessage = escapeHtml(message) || 'N/A';
       const safeDepartment = escapeHtml(department);
       
-      await sendMail({
-        to: adminEmail,
-        subject: `New ${safeDepartment.toUpperCase()} Request from ${safeName}`,
-        html: generateAdminInquiryEmail(
-          {
-            department: safeDepartment,
-            name: safeName,
-            email: safeEmail,
-            phone: safePhone,
-            company: safeCompany,
-            message: safeMessage,
-            attachment_url
-          },
-          itemsHtml,
-          !!attachment_url,
-          apiUrl
-        ),
-        attachments
-      });
+      const adminHtml = generateAdminInquiryEmail(
+        {
+          department: safeDepartment,
+          name: safeName,
+          email: safeEmail,
+          phone: safePhone,
+          company: safeCompany,
+          message: safeMessage,
+          attachment_url
+        },
+        itemsHtml,
+        !!attachment_url,
+        apiUrl
+      );
+
+      await Promise.allSettled(
+        adminEmails.map(emailAddr =>
+          sendMail({
+            to: emailAddr,
+            subject: `New ${safeDepartment.toUpperCase()} Request from ${safeName}`,
+            html: adminHtml,
+            attachments
+          })
+        )
+      );
     }
 
     // Send confirmation email to Client

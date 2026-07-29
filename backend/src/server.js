@@ -29,6 +29,7 @@ require('./modules/about/processPillar.model');
 require('./modules/about/partnerBrand.model');
 require('./modules/homepage/homeScroller.model');
 require('./modules/users/user.model');
+require('./modules/logs/adminLog.model');
 
 const PORT = process.env.PORT || 5000;
 

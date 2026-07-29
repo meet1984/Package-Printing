@@ -23,6 +23,7 @@ import AdminHomepage from './features/admin/homepage/AdminHomepage';
 import AdminBlog from './features/admin/blog/AdminBlog';
 import AdminAboutPage from './features/admin/about/AdminAboutPage';
 import AdminUsers from './features/admin/users/AdminUsers';
+import AdminLogs from './features/admin/logs/AdminLogs';
 import AdminSiteFaq from './features/admin/site-faq/AdminSiteFaq';
 import AdminContactSettings from './features/admin/contact-settings/AdminContactSettings';
 import AdminTemplates from './features/admin/templates/AdminTemplates';
@@ -66,6 +67,7 @@ function App() {
           <Route path="/admin/blog" element={<AdminBlog />} />
           <Route path="/admin/about" element={<AdminAboutPage />} />
           <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/logs" element={<AdminLogs />} />
           <Route path="/admin/templates" element={<AdminTemplates />} />
           <Route path="/admin/templates/new" element={<AdminTemplateEdit />} />
           <Route path="/admin/templates/edit/:id" element={<AdminTemplateEdit />} />

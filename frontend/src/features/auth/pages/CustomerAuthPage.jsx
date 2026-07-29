@@ -39,7 +39,10 @@ const CustomerAuthPage = () => {
     setLoading(true);
     setError('');
     try {
-      await axios.post(`${API_URL}/users/verify-otp`, { email: formData.email, otp: formData.otp });
+      const res = await axios.post(`${API_URL}/users/verify-otp`, { email: formData.email, otp: formData.otp });
+      if (res.data.user?.role === 'admin') {
+        sessionStorage.setItem('admin_session_active', 'true');
+      }
       await loadUser();
       navigate('/');
     } catch (err) {
@@ -54,7 +57,10 @@ const CustomerAuthPage = () => {
     setLoading(true);
     setError('');
     try {
-      await axios.post(`${API_URL}/users/login`, { email: formData.email, password: formData.password, otp: formData.otp });
+      const res = await axios.post(`${API_URL}/users/login`, { email: formData.email, password: formData.password, otp: formData.otp });
+      if (res.data.user?.role === 'admin') {
+        sessionStorage.setItem('admin_session_active', 'true');
+      }
       await loadUser();
       navigate('/admin/dashboard');
     } catch (err) {
@@ -76,6 +82,10 @@ const CustomerAuthPage = () => {
         setMessage('Admin security code sent to your email.');
         setLoading(false);
         return;
+      }
+
+      if (res.data.user?.role === 'admin') {
+        sessionStorage.setItem('admin_session_active', 'true');
       }
 
       await loadUser();

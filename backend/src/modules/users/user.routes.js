@@ -21,5 +21,8 @@ router.get('/me', ctrl.getMe);
 
 // Admin only routes
 router.get('/admin', protect, admin, ctrl.adminGetUsers);
+router.post('/admin/create-admin', protect, admin, ctrl.adminCreateAdmin);
+router.patch('/admin/:id/role', protect, admin, ctrl.adminUpdateRole);
+router.delete('/admin/:id', protect, admin, ctrl.adminDeleteUser);
 
 module.exports = router;

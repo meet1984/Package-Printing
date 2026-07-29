@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../store/useAuth';
-import { Menu, X, ChevronDown, ChevronRight, LayoutDashboard, PackageSearch, Users, Image as ImageIcon, MessageSquare, HelpCircle, Mail, Settings, PenTool, Layers } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronRight, LayoutDashboard, PackageSearch, Users, Image as ImageIcon, MessageSquare, HelpCircle, Mail, Settings, PenTool, Layers, History } from 'lucide-react';
 import ToastContainer from '../components/ToastContainer';
 
 const NAV_SECTIONS = [
@@ -19,6 +19,7 @@ const NAV_SECTIONS = [
     links: [
       { to: '/admin/inquiries', label: 'Inquiries', icon: MessageSquare },
       { to: '/admin/users', label: 'Users', icon: Users },
+      { to: '/admin/logs', label: 'Activity Logs', icon: History },
     ],
   },
   {

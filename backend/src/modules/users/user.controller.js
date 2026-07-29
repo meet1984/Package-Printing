@@ -212,14 +212,129 @@ exports.getMe = async (req, res, next) => {
 // ─── Admin Routes ────────────────────────────────────────
 
 // Get all users
+const getSuperAdminEmail = () => (process.env.ADMIN_EMAIL || '').toLowerCase();
+
+const verifySuperAdmin = async (userId) => {
+  const caller = await User.findByPk(userId);
+  const superEmail = getSuperAdminEmail();
+  return caller && caller.email.toLowerCase() === superEmail;
+};
+
 exports.adminGetUsers = async (req, res, next) => {
   try {
     const users = await User.findAll({
-      attributes: ['id', 'name', 'email', 'is_verified', 'last_login', 'createdAt'],
+      attributes: ['id', 'name', 'email', 'role', 'is_verified', 'last_login', 'createdAt'],
       order: [['createdAt', 'DESC']]
     });
     const totalCount = await User.count();
-    res.json({ users, totalCount });
+    const superAdminEmail = getSuperAdminEmail();
+    res.json({ users, totalCount, superAdminEmail });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Create a new admin user or promote an existing user (Super Admin only)
+exports.adminCreateAdmin = async (req, res, next) => {
+  try {
+    const isSuperAdmin = await verifySuperAdmin(req.user.id);
+    if (!isSuperAdmin) {
+      return res.status(403).json({ 
+        message: 'Only the Super Admin configured in .env can create or promote administrator accounts.' 
+      });
+    }
+
+    const { name, email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    let user = await User.findOne({ where: { email } });
+    if (user) {
+      if (user.role === 'admin') {
+        return res.status(400).json({ message: 'An admin account with this email already exists' });
+      }
+      user.role = 'admin';
+      user.is_verified = true;
+      if (name) user.name = name;
+      user.password = password;
+      await user.save();
+      return res.json({ message: 'Existing user promoted to Admin successfully', user });
+    }
+
+    user = await User.create({
+      name: name || 'Admin User',
+      email,
+      password,
+      role: 'admin',
+      is_verified: true
+    });
+
+    res.status(201).json({ message: 'New admin created successfully', user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Update user role (Super Admin only)
+exports.adminUpdateRole = async (req, res, next) => {
+  try {
+    const isSuperAdmin = await verifySuperAdmin(req.user.id);
+    if (!isSuperAdmin) {
+      return res.status(403).json({ 
+        message: 'Only the Super Admin configured in .env can change administrator roles.' 
+      });
+    }
+
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (!['admin', 'customer'].includes(role)) {
+      return res.status(400).json({ message: 'Invalid role specified' });
+    }
+
+    if (req.user && parseInt(req.user.id) === parseInt(id)) {
+      return res.status(400).json({ message: 'You cannot change your own role' });
+    }
+
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.email.toLowerCase() === getSuperAdminEmail()) {
+      return res.status(400).json({ message: 'The Super Admin account cannot be demoted.' });
+    }
+
+    user.role = role;
+    await user.save();
+
+    res.json({ message: `User role updated to ${role}`, user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete user
+exports.adminDeleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (req.user && parseInt(req.user.id) === parseInt(id)) {
+      return res.status(400).json({ message: 'You cannot delete your own account' });
+    }
+
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.email.toLowerCase() === getSuperAdminEmail()) {
+      return res.status(400).json({ message: 'The Super Admin account cannot be deleted.' });
+    }
+
+    await user.destroy();
+    res.json({ message: 'User deleted successfully' });
   } catch (error) {
     next(error);
   }

@@ -21,6 +21,10 @@ app.use(morgan('dev'));
 const seoInjector = require('./middleware/seoInjector');
 app.use(seoInjector);
 
+// Automatic Admin Activity Logger
+const adminLogger = require('./middleware/adminLogger');
+app.use('/api', adminLogger);
+
 // Static files (local uploads fallback)
 app.use('/uploads', express.static('uploads', {
   setHeaders: (res, path) => {
@@ -44,6 +48,7 @@ app.use('/api/home-scrollers', require('./modules/homepage/homeScroller.routes')
 app.use('/api/blog-posts', require('./modules/content/blogPost.routes'));
 app.use('/api/about', require('./modules/about/about.routes'));
 app.use('/api/users', require('./modules/users/user.routes'));
+app.use('/api/admin-logs', require('./modules/logs/adminLog.routes'));
 app.use('/api/site-faqs', require('./modules/content/siteFaq.routes'));
 app.use('/api/templates', require('./modules/templates/template.routes'));
 app.use('/api/mockups', require('./modules/mockups/mockup.routes'));
