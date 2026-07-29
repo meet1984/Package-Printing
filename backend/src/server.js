@@ -1,9 +1,15 @@
+const path = require('path');
+const express = require('express');
+
 const app = require('./app');
 const sequelize = require('./config/db');
 
+// serve frontend files
+app.use(express.static(path.join(__dirname, '../frontend/build')));
+
 // Import all models to ensure they are registered before sync
 require('./modules/categories/category.model');
-require('./modules/templates/template.model'); // must be before product.model (FK dependency)
+require('./modules/templates/template.model');
 require('./modules/products/product.model');
 require('./modules/products/productVariant.model');
 require('./modules/products/productImage.model');
@@ -30,10 +36,9 @@ async function startServer() {
   try {
     await sequelize.authenticate();
     console.log('Database connection has been established successfully.');
-    
-    // Sync models (in production, use migrations)
+
     await sequelize.sync();
-    
+
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
@@ -42,11 +47,5 @@ async function startServer() {
     process.exit(1);
   }
 }
-
-app.use(express.static(path.join(__dirname, 'frontend', 'build')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
-});
 
 startServer();

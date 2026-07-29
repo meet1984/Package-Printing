@@ -10,7 +10,7 @@ async function run() {
     );
     console.log('templateId column exists:', rows.length > 0 ? 'YES ✅' : 'NO ❌');
     console.log('Product->Template association:', !!Product.associations.Template ? 'YES ✅' : 'NO ❌');
-  } catch(e) {
+  } catch (e) {
     console.error('Error:', e.message);
   }
   process.exit(0);

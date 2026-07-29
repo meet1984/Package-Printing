@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
+    "db:sync": "node src/sync-db.js",
     "db:seed-admin": "node src/scripts/seedAdmin.js",
     "db:cleanup-indexes": "node src/scripts/cleanup-duplicate-indexes.js"
   },

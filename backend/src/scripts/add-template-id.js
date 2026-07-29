@@ -11,7 +11,7 @@ async function run() {
       await sequelize.query('ALTER TABLE Products ADD COLUMN templateId CHAR(36) NULL DEFAULT NULL;');
       console.log('Done: templateId column added.');
     }
-  } catch(e) {
+  } catch (e) {
     console.error('Error:', e.message);
   }
   process.exit(0);
