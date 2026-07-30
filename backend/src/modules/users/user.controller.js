@@ -10,13 +10,30 @@ const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString(); // 6 digits
 };
 
+// Constant-time OTP comparison to avoid leaking match-length via response timing
+const isOtpValid = (storedOtp, suppliedOtp) => {
+  if (typeof storedOtp !== 'string' || typeof suppliedOtp !== 'string') return false;
+  const a = Buffer.from(storedOtp);
+  const b = Buffer.from(suppliedOtp);
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
+};
+
 // ─── Public Routes ───────────────────────────────────────
+
+// Minimum password strength requirement (length only, to avoid being overly restrictive)
+const MIN_PASSWORD_LENGTH = 8;
+const isPasswordStrongEnough = (password) =>
+  typeof password === 'string' && password.length >= MIN_PASSWORD_LENGTH;
 
 // Register & Send OTP
 exports.register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
     if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
+    if (!isPasswordStrongEnough(password)) {
+      return res.status(400).json({ message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters long` });
+    }
 
     let user = await User.findOne({ where: { email } });
     if (user && user.is_verified) {
@@ -59,7 +76,7 @@ exports.verifyOTP = async (req, res, next) => {
 
     if (!user) return res.status(404).json({ message: 'User not found' });
     if (user.is_verified) return res.status(400).json({ message: 'User already verified' });
-    if (user.otp !== otp) {
+    if (!isOtpValid(user.otp, otp)) {
       user.otp_attempts += 1;
       if (user.otp_attempts >= 5) {
         user.otp = null;
@@ -129,7 +146,7 @@ exports.login = async (req, res, next) => {
 
         return res.json({ message: 'OTP sent to email', requireOTP: true });
       } else {
-        if (user.otp !== otp) {
+        if (!isOtpValid(user.otp, otp)) {
           user.otp_attempts += 1;
           if (user.otp_attempts >= 5) {
             user.otp = null;
@@ -211,6 +228,13 @@ exports.getMe = async (req, res, next) => {
 
 // ─── Admin Routes ────────────────────────────────────────
 
+// Strip sensitive fields (password hash, OTP, OTP metadata) before sending a user back to the client
+const sanitizeUser = (user) => {
+  const plain = user.toJSON ? user.toJSON() : user;
+  const { password, otp, otp_expires_at, otp_attempts, ...safe } = plain;
+  return safe;
+};
+
 // Get all users
 const getSuperAdminEmail = () => (process.env.ADMIN_EMAIL || '').toLowerCase();
 
@@ -248,6 +272,9 @@ exports.adminCreateAdmin = async (req, res, next) => {
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
     }
+    if (!isPasswordStrongEnough(password)) {
+      return res.status(400).json({ message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters long` });
+    }
 
     let user = await User.findOne({ where: { email } });
     if (user) {
@@ -259,7 +286,7 @@ exports.adminCreateAdmin = async (req, res, next) => {
       if (name) user.name = name;
       user.password = password;
       await user.save();
-      return res.json({ message: 'Existing user promoted to Admin successfully', user });
+      return res.json({ message: 'Existing user promoted to Admin successfully', user: sanitizeUser(user) });
     }
 
     user = await User.create({
@@ -270,7 +297,7 @@ exports.adminCreateAdmin = async (req, res, next) => {
       is_verified: true
     });
 
-    res.status(201).json({ message: 'New admin created successfully', user });
+    res.status(201).json({ message: 'New admin created successfully', user: sanitizeUser(user) });
   } catch (error) {
     next(error);
   }
@@ -309,7 +336,7 @@ exports.adminUpdateRole = async (req, res, next) => {
     user.role = role;
     await user.save();
 
-    res.json({ message: `User role updated to ${role}`, user });
+    res.json({ message: `User role updated to ${role}`, user: sanitizeUser(user) });
   } catch (error) {
     next(error);
   }

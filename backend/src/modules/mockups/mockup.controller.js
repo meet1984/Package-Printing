@@ -1,5 +1,5 @@
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs/promises');
 const { createCanvas, loadImage } = require('@napi-rs/canvas');
 const Template = require('../templates/template.model');
 
@@ -60,7 +60,7 @@ exports.renderMockup = async (req, res, next) => {
         if (typeof src === 'string') {
           // If it has local paths from getLocalPath, they won't start with /uploads anymore, they are C:\...
           // Read file to buffer first to ensure napi-rs handles it smoothly
-          const buf = fs.readFileSync(src);
+          const buf = await fs.readFile(src);
           return await loadImage(buf);
         }
         return await loadImage(src);
@@ -81,7 +81,7 @@ exports.renderMockup = async (req, res, next) => {
     const filepath = path.join(__dirname, '../../../uploads', filename);
     
     const buffer = await canvas.encode('png');
-    fs.writeFileSync(filepath, buffer);
+    await fs.writeFile(filepath, buffer);
 
     res.json({ url: `/uploads/${filename}` });
   } catch (error) {

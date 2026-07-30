@@ -7,8 +7,8 @@ import { useAuth } from '../../../shared/store/useAuth';
 import InteractiveMockupPreview from './InteractiveMockupPreview';
 
 export default function MockupEditor({ template, productId, onClose }) {
-  const { showToast } = useToast();
-  const { isAuthenticated } = useAuth();
+  const showToast = useToast((s) => s.showToast);
+  const isAuthenticated = useAuth((s) => s.isAuthenticated);
   
   // Ensure template has faces array (fallback if not migrated)
   const faces = template?.faces && template.faces.length > 0 ? template.faces : [{

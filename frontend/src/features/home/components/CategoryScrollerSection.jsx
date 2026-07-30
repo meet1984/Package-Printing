@@ -2,6 +2,12 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import CategoryCard from './CategoryCard';
 
+// See ProductScrollerSection.jsx for the rationale - this only needs to be
+// comfortably larger than the ~1-block buffer the loop logic relies on, not
+// the dozens of copies it was before.
+const REPEAT = 6;
+const REPEAT_MID = REPEAT / 2;
+
 const CategoryScrollerSection = ({ title, categories }) => {
   const scrollRef = useRef(null);
   const sectionRef = useRef(null);
@@ -18,6 +24,9 @@ const CategoryScrollerSection = ({ title, categories }) => {
   const scrollLeft = useRef(0);
   const isHovered = useRef(false);
   const autoScrollInterval = useRef(null);
+  // Tracks whether the section is currently on-screen so the rAF auto-scroll
+  // loop below can pause itself instead of running indefinitely off-screen.
+  const isInViewport = useRef(false);
 
   const checkScroll = useCallback(() => {
     if (scrollRef.current) {
@@ -44,11 +53,11 @@ const CategoryScrollerSection = ({ title, categories }) => {
   const handleScroll = useCallback(() => {
     if (!scrollRef.current) return;
     const { scrollLeft, scrollWidth } = scrollRef.current;
-    const singleBlockWidth = scrollWidth / 24;
+    const singleBlockWidth = scrollWidth / REPEAT;
 
-    if (scrollLeft >= singleBlockWidth * 13) {
+    if (scrollLeft >= singleBlockWidth * (REPEAT_MID + 1)) {
       scrollRef.current.scrollLeft -= singleBlockWidth;
-    } else if (scrollLeft <= singleBlockWidth * 11) {
+    } else if (scrollLeft <= singleBlockWidth * (REPEAT_MID - 1)) {
       scrollRef.current.scrollLeft += singleBlockWidth;
     }
   }, []);
@@ -61,7 +70,7 @@ const CategoryScrollerSection = ({ title, categories }) => {
     }
 
     const animate = () => {
-      if (!isHovered.current && !isDragging.current && scrollRef.current) {
+      if (!isHovered.current && !isDragging.current && isInViewport.current && scrollRef.current) {
         scrollRef.current.scrollLeft += 1;
       }
       autoScrollInterval.current = requestAnimationFrame(animate);
@@ -99,6 +108,23 @@ const CategoryScrollerSection = ({ title, categories }) => {
 
     observer.observe(currentSection);
     return () => observer.disconnect();
+  }, []);
+
+  // Continuously track on-screen state (separate from the one-shot entrance
+  // observer above) so the auto-scroll rAF loop can pause while off-screen.
+  useEffect(() => {
+    const currentSection = sectionRef.current;
+    if (!currentSection) return;
+
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isInViewport.current = entry.isIntersecting;
+      },
+      { threshold: 0 }
+    );
+
+    visibilityObserver.observe(currentSection);
+    return () => visibilityObserver.disconnect();
   }, []);
 
   const handlePointerDown = (e) => {
@@ -139,8 +165,8 @@ const CategoryScrollerSection = ({ title, categories }) => {
   useEffect(() => {
     const initScroll = () => {
       if (scrollRef.current) {
-        const singleBlockWidth = scrollRef.current.scrollWidth / 24;
-        scrollRef.current.scrollLeft = singleBlockWidth * 12;
+        const singleBlockWidth = scrollRef.current.scrollWidth / REPEAT;
+        scrollRef.current.scrollLeft = singleBlockWidth * REPEAT_MID;
       }
     };
     setTimeout(initScroll, 100);
@@ -148,7 +174,7 @@ const CategoryScrollerSection = ({ title, categories }) => {
 
   if (!categories || categories.length === 0) return null;
 
-  const duplicatedCategories = Array.from({ length: 24 }).flatMap(() => categories);
+  const duplicatedCategories = Array.from({ length: REPEAT }).flatMap(() => categories);
 
   return (
     <section ref={sectionRef} className="w-full select-none py-12 bg-gray-50">

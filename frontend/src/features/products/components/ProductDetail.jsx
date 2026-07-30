@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProducts } from '../useProducts';
 import SEO from '../../../shared/components/SEO';
 import { Helmet } from 'react-helmet-async';
-import MockupEditor from '../../generator/components/MockupEditor';
 import Button from '../../../shared/components/Button';
 import { ChevronDown, Sparkles } from 'lucide-react';
+
+// Only needed when a visitor opens "Preview with Your Logo" - lazy-load it so
+// the canvas editor's code isn't part of every product page's initial bundle.
+const MockupEditor = lazy(() => import('../../generator/components/MockupEditor'));
 
 const ProductDetail = () => {
   const { slug } = useParams();
@@ -43,11 +46,17 @@ const ProductDetail = () => {
   if (showMockupModal && product.Template) {
     return (
       <div className="bg-gray-50 min-h-screen pt-4 pb-12">
-        <MockupEditor
-          template={product.Template}
-          productId={product.id}
-          onClose={() => setShowMockupModal(false)}
-        />
+        <Suspense fallback={
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-2 border-gray-200 border-t-brand" role="status" aria-label="Loading editor" />
+          </div>
+        }>
+          <MockupEditor
+            template={product.Template}
+            productId={product.id}
+            onClose={() => setShowMockupModal(false)}
+          />
+        </Suspense>
       </div>
     );
   }

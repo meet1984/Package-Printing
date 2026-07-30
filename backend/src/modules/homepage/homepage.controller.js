@@ -8,65 +8,79 @@ const HomeScroller = require('./homeScroller.model');
 
 exports.getHomepageData = async (req, res, next) => {
   try {
-    // 1. Hero Banners
-    const heroBanners = await HeroBanner.findAll({
-      where: { is_active: true },
-      order: [['sort_order', 'ASC']]
-    });
+    // These six lookups are independent of one another (none depends on another's
+    // result), so run them concurrently instead of awaiting each in series - this
+    // reduces homepage TTFB from the sum of all query times to roughly the slowest one.
+    const [
+      heroBanners,
+      trendingCategories,
+      homeScrollProducts,
+      featuredProducts,
+      blogPosts,
+      customScrollers,
+      valueProps
+    ] = await Promise.all([
+      // 1. Hero Banners
+      HeroBanner.findAll({
+        where: { is_active: true },
+        order: [['sort_order', 'ASC']]
+      }),
 
-    // 2. Trending Categories
-    const trendingCategories = await Category.findAll({
-      where: { show_on_homepage: true },
-      order: [['homepage_sort_order', 'ASC']],
-      attributes: ['id', 'name', 'slug', 'homepage_image']
-    });
+      // 2. Trending Categories
+      Category.findAll({
+        where: { show_on_homepage: true },
+        order: [['homepage_sort_order', 'ASC']],
+        attributes: ['id', 'name', 'slug', 'homepage_image']
+      }),
 
-    // 3. Homepage Scroll Products
-    const homeScrollProducts = await Product.findAll({
-      where: { show_in_home_scroll: true, is_active: true },
-      order: [['home_scroll_order', 'ASC']],
-      include: [
-        { model: ProductImage, as: 'images', attributes: ['url', 'is_primary'] },
-        { model: Category }
-      ]
-    });
+      // 3. Homepage Scroll Products
+      Product.findAll({
+        where: { show_in_home_scroll: true, is_active: true },
+        order: [['home_scroll_order', 'ASC']],
+        include: [
+          { model: ProductImage, as: 'images', attributes: ['url', 'is_primary'] },
+          { model: Category }
+        ]
+      }),
 
-    // 4. Featured Products (Trusted Brands)
-    const featuredProducts = await Product.findAll({
-      where: { homepage_tag: 'featured', is_active: true },
-      order: [['homepage_sort_order', 'ASC']],
-      include: [
-        { model: ProductImage, as: 'images', attributes: ['url', 'is_primary'] },
-        { model: Category }
-      ]
-    });
+      // 4. Featured Products (Trusted Brands)
+      Product.findAll({
+        where: { homepage_tag: 'featured', is_active: true },
+        order: [['homepage_sort_order', 'ASC']],
+        include: [
+          { model: ProductImage, as: 'images', attributes: ['url', 'is_primary'] },
+          { model: Category }
+        ]
+      }),
 
-    // 5. Blog Posts (Get Inspired)
-    const blogPosts = await BlogPost.findAll({
-      where: { is_published: true },
-      order: [['published_at', 'DESC']],
-      limit: 4
-    });
+      // 5. Blog Posts (Get Inspired)
+      BlogPost.findAll({
+        where: { is_published: true },
+        order: [['published_at', 'DESC']],
+        limit: 4
+      }),
 
-    // 5.5 Custom Scrollers
-    const customScrollers = await HomeScroller.findAll({
-      where: { is_active: true },
-      order: [['sort_order', 'ASC']],
-      include: [
-        {
-          model: Product,
-          as: 'products',
-          attributes: ['id', 'name', 'slug', 'base_price', 'moq', 'is_new'],
-          through: { attributes: [] },
-          include: [
-            { model: ProductImage, as: 'images', attributes: ['url', 'is_primary'] }
-          ]
-        }
-      ]
-    });
+      // 5.5 Custom Scrollers
+      HomeScroller.findAll({
+        where: { is_active: true },
+        order: [['sort_order', 'ASC']],
+        include: [
+          {
+            model: Product,
+            as: 'products',
+            attributes: ['id', 'name', 'slug', 'base_price', 'moq', 'is_new'],
+            through: { attributes: [] },
+            include: [
+              { model: ProductImage, as: 'images', attributes: ['url', 'is_primary'] }
+            ]
+          }
+        ]
+      }),
 
-    // 6. Value Props
-    let valueProps = await PageContent.findOne({ where: { page_key: 'home_value_props' } });
+      // 6. Value Props
+      PageContent.findOne({ where: { page_key: 'home_value_props' } })
+    ]);
+
     let formattedValueProps = {
       title: 'Why brands choose Zeprr',
       content: JSON.stringify([

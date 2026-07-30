@@ -100,6 +100,14 @@ const Product = sequelize.define('Product', {
   tableName: 'Products',
   paranoid: true, // soft deletes
   timestamps: true,
+  indexes: [
+    // getAllProducts / product listing filtered by category
+    { fields: ['is_active', 'category_id'] },
+    // homepage.controller: homeScrollProducts
+    { fields: ['is_active', 'show_in_home_scroll'] },
+    // homepage.controller: featuredProducts
+    { fields: ['is_active', 'homepage_tag'] }
+  ],
   hooks: {
     beforeValidate: async (product, options) => {
       if (product.name && !product.slug) {

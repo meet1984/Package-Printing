@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { ExternalLink, ArrowRight, ChevronDown } from 'lucide-react';
+import { ExternalLink, ChevronDown } from 'lucide-react';
+
 
 const InstagramIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -97,7 +98,7 @@ const Footer = () => {
 
       {/* Main content */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-4 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-12">
 
           {/* Brand column */}
           <div className="lg:col-span-1 pb-6 lg:pb-0">
@@ -169,45 +170,6 @@ const Footer = () => {
               <p className="whitespace-pre-line leading-relaxed">{contactSettings.address}</p>
               <a href={`mailto:${contactSettings.email}`} className="block hover:text-white transition-colors">{contactSettings.email}</a>
               <a href={`tel:${contactSettings.whatsapp}`} className="block hover:text-white transition-colors">{contactSettings.whatsapp}</a>
-            </div>
-          </div>
-
-          {/* Newsletter */}
-          <div className="border-t border-gray-800 lg:border-t-0 py-4 lg:py-0">
-            <button
-              className="w-full flex items-center justify-between lg:cursor-default lg:block"
-              onClick={() => toggleSection('newsletter')}
-            >
-              <h4 className="text-sm font-semibold text-white tracking-wide">Stay Updated</h4>
-              <ChevronDown className={`w-4 h-4 text-gray-400 lg:hidden transition-transform ${openSection === 'newsletter' ? 'rotate-180' : ''}`} />
-            </button>
-            <div className={`overflow-hidden transition-all duration-300 lg:max-h-none lg:mt-4 lg:opacity-100 ${openSection === 'newsletter' ? 'max-h-60 mt-4 opacity-100' : 'max-h-0 mt-0 opacity-0'}`}>
-              <p className="text-sm text-gray-400 mb-4">Get packaging tips and exclusive offers.</p>
-              <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
-                <input
-                  type="email"
-                  placeholder="your@email.com"
-                  className="
-                    w-full px-4 py-2.5 text-sm
-                    bg-gray-800 border border-gray-700 rounded-lg
-                    text-white placeholder-gray-500
-                    focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand
-                    transition-all duration-[var(--duration-fast)]
-                  "
-                  required
-                />
-                <button
-                  type="submit"
-                  className="
-                    w-full px-4 py-2.5 text-sm font-semibold
-                    bg-brand text-white rounded-lg
-                    hover:bg-brand-hover transition-colors duration-[var(--duration-fast)]
-                    flex items-center justify-center gap-2
-                  "
-                >
-                  Subscribe <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </form>
             </div>
           </div>
 

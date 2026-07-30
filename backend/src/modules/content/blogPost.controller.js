@@ -1,8 +1,23 @@
 const BlogPost = require('./blogPost.model');
+const createDOMPurify = require('dompurify');
+const { JSDOM } = require('jsdom');
+
+const window = new JSDOM('').window;
+const DOMPurify = createDOMPurify(window);
+
+const sanitizePostBody = (body) => {
+  if (body && typeof body.content === 'string') {
+    return { ...body, content: DOMPurify.sanitize(body.content) };
+  }
+  return body;
+};
 
 exports.getAllPosts = async (req, res, next) => {
   try {
+    const isAdmin = req.user && req.user.role === 'admin';
+    const where = isAdmin ? {} : { is_published: true };
     const posts = await BlogPost.findAll({
+      where,
       order: [['createdAt', 'DESC']]
     });
     res.json(posts);
@@ -13,8 +28,9 @@ exports.getAllPosts = async (req, res, next) => {
 
 exports.getPostBySlug = async (req, res, next) => {
   try {
+    const isAdmin = req.user && req.user.role === 'admin';
     const post = await BlogPost.findOne({ where: { slug: req.params.slug } });
-    if (!post) {
+    if (!post || (!isAdmin && !post.is_published)) {
       return res.status(404).json({ message: 'Blog post not found' });
     }
     res.json(post);
@@ -25,7 +41,7 @@ exports.getPostBySlug = async (req, res, next) => {
 
 exports.createPost = async (req, res, next) => {
   try {
-    const post = await BlogPost.create(req.body);
+    const post = await BlogPost.create(sanitizePostBody(req.body));
     res.status(201).json(post);
   } catch (error) {
     next(error);
@@ -38,7 +54,7 @@ exports.updatePost = async (req, res, next) => {
     if (!post) {
       return res.status(404).json({ message: 'Blog post not found' });
     }
-    await post.update(req.body);
+    await post.update(sanitizePostBody(req.body));
     res.json(post);
   } catch (error) {
     next(error);

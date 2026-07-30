@@ -52,6 +52,10 @@ const Category = sequelize.define('Category', {
   tableName: 'Categories',
   paranoid: true, // soft deletes
   timestamps: true,
+  indexes: [
+    // homepage.controller: trendingCategories
+    { fields: ['show_on_homepage'] }
+  ],
   hooks: {
     beforeDestroy: async (category, options) => {
       const Product = sequelize.models.Product;
