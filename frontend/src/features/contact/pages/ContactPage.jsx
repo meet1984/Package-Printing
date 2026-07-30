@@ -63,6 +63,16 @@ const ContactPage = () => {
     { id: 'partnership', icon: Handshake, label: 'Partnership / Press' }
   ];
 
+  const handleFileSelect = (selectedFile) => {
+    if (!selectedFile) return;
+    if (selectedFile.size > 10 * 1024 * 1024) {
+      alert(`File "${selectedFile.name}" exceeds the maximum upload limit of 10MB.`);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+    setFile(selectedFile);
+  };
+
   const handleDragOver = (e) => {
     e.preventDefault();
   };
@@ -70,9 +80,10 @@ const ContactPage = () => {
   const handleDrop = (e) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFile(e.dataTransfer.files[0]);
+      handleFileSelect(e.dataTransfer.files[0]);
     }
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -211,13 +222,14 @@ const ContactPage = () => {
                             onDrop={handleDrop}
                             onClick={() => fileInputRef.current?.click()}
                           >
-                            <input 
-                              type="file" 
-                              className="hidden" 
-                              ref={fileInputRef}
-                              onChange={(e) => e.target.files && setFile(e.target.files[0])}
-                              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp"
-                            />
+                              <input 
+                                type="file" 
+                                className="hidden" 
+                                ref={fileInputRef}
+                                onChange={(e) => e.target.files && handleFileSelect(e.target.files[0])}
+                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp"
+                              />
+
                             
                             {file ? (
                               <div className="inline-flex items-center gap-2 bg-brand-subtle text-brand px-4 py-2 rounded-lg text-sm font-medium">

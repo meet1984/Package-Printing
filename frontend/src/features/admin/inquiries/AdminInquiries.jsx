@@ -32,7 +32,7 @@ const AdminInquiries = () => {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      await axios.put(`${API_URL}/inquiries/${id}/status`, { status: newStatus }, {
+      await axios.post(`${API_URL}/inquiries/${id}/status`, { status: newStatus }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchInquiries();

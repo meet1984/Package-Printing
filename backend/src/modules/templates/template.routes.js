@@ -33,6 +33,7 @@ router.get('/:id', optionalAuth, templateController.getTemplateById);
 
 router.post('/', protect, admin, templateController.createTemplate);
 router.patch('/:id', protect, admin, templateController.updateTemplate);
+router.post('/:id', protect, admin, templateController.updateTemplate);
 router.delete('/:id', protect, admin, templateController.deleteTemplate);
 
 module.exports = router;

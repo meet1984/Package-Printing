@@ -23,7 +23,7 @@ export const createTemplate = async (templateData) => {
 };
 
 export const updateTemplate = async (id, templateData) => {
-  const { data } = await api.patch(`/templates/${id}`, templateData);
+  const { data } = await api.post(`/templates/${id}`, templateData);
   return data;
 };
 

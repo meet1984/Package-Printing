@@ -68,7 +68,7 @@ const AdminHomepage = () => {
       const payload = { ...formData };
 
       if (formData.id) {
-        await axios.put(`${API_URL}/hero-banners/${formData.id}`, payload, {
+        await axios.post(`${API_URL}/hero-banners/${formData.id}`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
@@ -87,7 +87,7 @@ const AdminHomepage = () => {
   const handleSaveValueProps = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`${API_URL}/content/home_value_props`, {
+      await axios.post(`${API_URL}/content/home_value_props`, {
         content: JSON.stringify({
           title: valuePropsData.title,
           items: valuePropsItems

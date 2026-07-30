@@ -140,6 +140,11 @@ export default function AdminTemplateEdit() {
   const handleImageUpload = async (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert(`Image "${file.name}" exceeds the maximum upload size limit of 5MB.`);
+      if (e.target) e.target.value = '';
+      return;
+    }
     
     const data = new FormData();
     data.append('image', file);

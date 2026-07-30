@@ -57,6 +57,11 @@ export default function MockupEditor({ template, productId, onClose }) {
   const handleDesignUpload = (e) => {
     const file = e.target.files[0];
     if (!file || !activeFace) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert(`Image "${file.name}" exceeds the maximum upload size limit of 5MB.`);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
     
     const reader = new FileReader();
     reader.onload = (ev) => {
@@ -270,7 +275,7 @@ export default function MockupEditor({ template, productId, onClose }) {
                 </div>
                 <div>
                   <p className="font-semibold text-gray-900">Upload design for {activeFace.name}</p>
-                  <p className="text-sm text-gray-500 mt-1">PNG or JPG, up to 10MB</p>
+                  <p className="text-sm text-gray-500 mt-1">PNG or JPG, up to 5MB</p>
                 </div>
               </button>
               <input type="file" ref={fileInputRef} onChange={handleDesignUpload} className="hidden" accept="image/*" />

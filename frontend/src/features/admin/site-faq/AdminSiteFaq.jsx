@@ -36,7 +36,7 @@ const AdminSiteFaq = () => {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.put(`${API_URL}/site-faqs/${editingId}`, formData, {
+        await axios.post(`${API_URL}/site-faqs/${editingId}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {

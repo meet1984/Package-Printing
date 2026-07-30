@@ -18,5 +18,6 @@ router.post('/', quoteLimiter, uploadDoc.single('attachment'), inquiryController
 // Admin routes
 router.get('/', protect, admin, inquiryController.getAllInquiries);
 router.put('/:id/status', protect, admin, inquiryController.updateInquiryStatus);
+router.post('/:id/status', protect, admin, inquiryController.updateInquiryStatus);
 
 module.exports = router;

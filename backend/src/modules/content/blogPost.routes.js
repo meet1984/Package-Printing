@@ -27,6 +27,7 @@ router.get('/', optionalAuth, blogPostController.getAllPosts);
 router.get('/:slug', optionalAuth, blogPostController.getPostBySlug);
 router.post('/', protect, admin, blogPostController.createPost);
 router.put('/:id', protect, admin, blogPostController.updatePost);
+router.post('/:id', protect, admin, blogPostController.updatePost);
 router.delete('/:id', protect, admin, blogPostController.deletePost);
 
 module.exports = router;

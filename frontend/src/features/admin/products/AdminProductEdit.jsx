@@ -134,7 +134,7 @@ const AdminProductEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`${API_URL}/products/${product.id}`, formData, {
+      await axios.post(`${API_URL}/products/${product.id}`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       navigate('/admin/products');

@@ -42,7 +42,7 @@ const CrudSection = ({ title, endpoint, fields, token, refreshKey }) => {
     e.preventDefault();
     try {
       if (formData.id) {
-        await axios.put(`${API_URL}/about/${endpoint}/${formData.id}`, formData, { headers: { Authorization: `Bearer ${token}` } });
+        await axios.post(`${API_URL}/about/${endpoint}/${formData.id}`, formData, { headers: { Authorization: `Bearer ${token}` } });
       } else {
         await axios.post(`${API_URL}/about/${endpoint}`, formData, { headers: { Authorization: `Bearer ${token}` } });
       }
@@ -230,7 +230,7 @@ const ContentTab = ({ token }) => {
   const handleSave = async (key, data) => {
     setSaving(true);
     try {
-      await axios.put(`${API_URL}/content/${key}`, { content: data }, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.post(`${API_URL}/content/${key}`, { content: data }, { headers: { Authorization: `Bearer ${token}` } });
       showToast('Saved!', 'success');
     } catch { showToast('Error saving', 'error'); }
     finally { setSaving(false); }

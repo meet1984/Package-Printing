@@ -7,6 +7,7 @@ router.get('/', homeScrollerController.getAllScrollers);
 router.get('/:id', homeScrollerController.getScroller);
 router.post('/', protect, admin, homeScrollerController.createScroller);
 router.put('/:id', protect, admin, homeScrollerController.updateScroller);
+router.post('/:id', protect, admin, homeScrollerController.updateScroller);
 router.delete('/:id', protect, admin, homeScrollerController.deleteScroller);
 
 module.exports = router;

@@ -8,5 +8,6 @@ router.get('/:key', pageContentController.getPageContent);
 
 // Admin route
 router.put('/:key', protect, admin, pageContentController.updatePageContent);
+router.post('/:key', protect, admin, pageContentController.updatePageContent);
 
 module.exports = router;

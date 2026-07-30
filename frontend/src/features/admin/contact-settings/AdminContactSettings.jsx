@@ -47,7 +47,7 @@ const AdminContactSettings = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      await axios.put(`${API_URL}/content/contact_settings`, { content: settings }, {
+      await axios.post(`${API_URL}/content/contact_settings`, { content: settings }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       showToast('Contact settings saved successfully!', 'success');

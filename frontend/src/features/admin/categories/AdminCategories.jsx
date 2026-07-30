@@ -52,7 +52,7 @@ const AdminCategories = () => {
     e.preventDefault();
     try {
       if (formData.id) {
-        await axios.put(`${API_URL}/categories/${formData.id}`, formData, {
+        await axios.post(`${API_URL}/categories/${formData.id}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {

@@ -1,8 +1,20 @@
 import React, { useState, useRef } from 'react';
 
-const AdminImageDropzone = ({ onDrop, accept = "image/*", children, className = "", disabled = false }) => {
+const AdminImageDropzone = ({ onDrop, accept = "image/*", children, className = "", disabled = false, maxSizeMB = 5 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+
+  const validateFiles = (files) => {
+    if (!files || files.length === 0) return false;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.size > maxSizeMB * 1024 * 1024) {
+        alert(`File "${file.name}" exceeds the maximum image upload size limit of ${maxSizeMB}MB.`);
+        return false;
+      }
+    }
+    return true;
+  };
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -22,9 +34,19 @@ const AdminImageDropzone = ({ onDrop, accept = "image/*", children, className = 
     setIsDragging(false);
     
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      // Create a mock event object to pass to existing handlers
+      if (!validateFiles(e.dataTransfer.files)) return;
       const mockEvent = { target: { files: e.dataTransfer.files } };
       onDrop(mockEvent);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      if (!validateFiles(e.target.files)) {
+        e.target.value = '';
+        return;
+      }
+      onDrop(e);
     }
   };
 
@@ -46,7 +68,7 @@ const AdminImageDropzone = ({ onDrop, accept = "image/*", children, className = 
       <input 
         type="file" 
         ref={fileInputRef} 
-        onChange={onDrop} 
+        onChange={handleFileChange} 
         className="hidden" 
         accept={accept}
         disabled={disabled}
@@ -56,3 +78,4 @@ const AdminImageDropzone = ({ onDrop, accept = "image/*", children, className = 
 };
 
 export default AdminImageDropzone;
+

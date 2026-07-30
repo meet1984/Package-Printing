@@ -80,7 +80,7 @@ const AdminUsers = () => {
 
     setActionLoadingId(targetUser.id);
     try {
-      const res = await axios.patch(
+      const res = await axios.post(
         `${API_URL}/users/admin/${targetUser.id}/role`,
         { role: newRole },
         { headers: { Authorization: `Bearer ${token}` } }

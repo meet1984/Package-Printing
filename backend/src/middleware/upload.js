@@ -26,4 +26,21 @@ const upload = multer({
   }
 });
 
-module.exports = upload;
+const uploadMiddleware = {
+  single: (fieldName) => {
+    return (req, res, next) => {
+      upload.single(fieldName)(req, res, (err) => {
+        if (err) {
+          if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({ message: 'Image size exceeds the 5MB upload limit.' });
+          }
+          return res.status(400).json({ message: err.message || 'Image upload failed.' });
+        }
+        next();
+      });
+    };
+  }
+};
+
+module.exports = uploadMiddleware;
+

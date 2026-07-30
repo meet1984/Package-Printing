@@ -10,6 +10,7 @@ router.get('/:slug', productController.getProductBySlug);
 // Admin routes
 router.post('/', protect, admin, productController.createProduct);
 router.put('/:id', protect, admin, productController.updateProduct);
+router.post('/:id', protect, admin, productController.updateProduct);
 router.delete('/:id', protect, admin, productController.deleteProduct);
 
 // Product Image Routes
